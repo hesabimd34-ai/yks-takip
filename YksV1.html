@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+<title>YKS — TAKIP</title>
+<meta name="theme-color" content="#07080f"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="YKS-TAKIP"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#07080f;--surface:#0e0f1c;--surface2:#161728;--border:#1e2035;
+  --accent:#4f7cff;--green:#2ecc8f;--orange:#ff8c42;--red:#ff4f6b;--purple:#a259ff;
+  --text:#e8e9f5;--text2:#6b6d8a;
+  --fd:'Syne',sans-serif;--fm:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;height:-webkit-fill-available}body{height:100%;height:-webkit-fill-available;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--fd);display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,124,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,124,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+/* HEADER */
+.header{flex-shrink:0;padding:16px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(7,8,15,.95);backdrop-filter:blur(12px);position:relative;z-index:100}
+.header h1{font-size:20px;font-weight:800;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{font-size:10px;color:var(--text2);font-family:var(--fm);margin-top:1px}
+.countdown{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:6px 12px;text-align:center}
+.countdown .d{font-size:20px;font-weight:800;color:var(--orange);font-family:var(--fm)}
+.countdown .l{font-size:8px;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+
+/* TABS */
+.tabs{flex-shrink:0;display:flex;gap:4px;padding:8px 12px;overflow-x:auto;scrollbar-width:none;background:rgba(7,8,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:relative;z-index:99}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:6px 12px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--text2);font-family:var(--fd);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab:hover{color:var(--text);background:var(--surface2)}
+.tab.active{background:var(--accent);color:#fff}
+
+/* SCROLL AREA */
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative;z-index:1;padding-bottom:16px}
+.scroll-area::-webkit-scrollbar{display:none}
+.scroll-area{scrollbar-width:none}
+
+/* SECTIONS */
+.sec{display:none;padding:12px}
+.sec.active{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text2);margin-bottom:12px}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
+.stat-box .si{font-size:18px;margin-bottom:2px}
+.stat-box .sv{font-size:20px;font-weight:800;font-family:var(--fm)}
+.stat-box .sl{font-size:9px;color:var(--text2);margin-top:1px}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:8px}
+.prog-header{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px}
+.prog-bar{height:7px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* MOTIVATION */
+.mot-card{background:linear-gradient(135deg,rgba(79,124,255,.12),rgba(162,89,255,.08));border:1px solid rgba(79,124,255,.25);border-radius:14px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden;cursor:pointer}
+.mot-card::before{content:'"';position:absolute;top:-8px;left:8px;font-size:64px;color:rgba(79,124,255,.12);font-family:Georgia,serif;line-height:1}
+.mot-text{font-size:14px;font-weight:600;line-height:1.6;position:relative}
+.mot-author{font-size:11px;color:var(--text2);margin-top:6px;font-style:italic}
+
+/* BUTTONS */
+.btn{padding:11px 18px;border-radius:11px;border:none;font-family:var(--fd);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-success{background:var(--green);color:#fff}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-full{width:100%;margin-top:8px}
+.btn-tg{background:linear-gradient(135deg,#229ED9,#1a7fc1);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+
+/* TIMER */
+.timer-wrap{display:flex;justify-content:center;margin:6px 0 14px}
+.timer-wrap svg{filter:drop-shadow(0 0 14px rgba(79,124,255,.25))}
+.timer-ctrl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.timer-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+
+/* TOPICS */
+.subj-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;cursor:pointer;margin-bottom:5px;transition:border-color .2s;-webkit-tap-highlight-color:transparent}
+.subj-hdr:hover{border-color:var(--accent)}
+.subj-hdr .sn{font-size:13px;font-weight:700}
+.subj-hdr .sp{font-family:var(--fm);font-size:11px;color:var(--accent)}
+.subj-topics{display:none;padding:2px 0 8px 6px}
+.subj-topics.open{display:block}
+.topic-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;transition:background .15s;font-size:12px;-webkit-tap-highlight-color:transparent}
+.topic-row:hover,.topic-row:active{background:var(--surface2)}
+.topic-cb{width:16px;height:16px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:10px}
+.topic-row.done .topic-cb{background:var(--green);border-color:var(--green);color:#fff}
+.topic-row.done .topic-nm{color:var(--text2);text-decoration:line-through}
+
+/* DENEME */
+.inp-grp{margin-bottom:8px}
+.inp-grp label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px}
+.inp-grp input,.inp-grp select{width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--fd);font-size:13px;outline:none;transition:border-color .2s}
+.inp-grp input:focus{border-color:var(--accent)}
+.exam-item{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.exam-item .escore{font-family:var(--fm);font-size:16px;font-weight:700;color:var(--accent)}
+
+/* CHART */
+.chart-wrap{position:relative;height:160px}
+
+/* TELEGRAM */
+.tg-inp{width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--fm);font-size:12px;outline:none;margin-bottom:8px;transition:border-color .2s}
+.tg-inp:focus{border-color:#229ED9}
+.tg-status{padding:9px 12px;border-radius:9px;font-size:12px;font-weight:600;text-align:center;display:none;margin-top:8px}
+.tg-status.ok{background:rgba(46,204,143,.15);color:var(--green);display:block}
+.tg-status.err{background:rgba(255,79,107,.15);color:var(--red);display:block}
+
+/* WEEKLY SCHEDULE */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
+.day-col{min-height:320px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:6px 4px;display:flex;flex-direction:column;gap:4px;transition:border-color .2s}
+.day-col.drag-over{border-color:var(--accent);background:rgba(79,124,255,.08)}
+.day-label{font-size:9px;font-weight:700;text-align:center;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;flex-shrink:0}
+.week-block{border-radius:7px;padding:5px 4px;font-size:9px;font-weight:700;text-align:center;cursor:grab;user-select:none;transition:all .2s;-webkit-tap-highlight-color:transparent;line-height:1.3}
+.week-block:active{cursor:grabbing;transform:scale(.95);opacity:.8}
+.week-block.dragging{opacity:.4;transform:scale(.9)}
+
+/* RESOURCES */
+.res-card{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:12px;margin-bottom:8px}
+.res-card .rc-title{font-size:13px;font-weight:700;margin-bottom:6px}
+.res-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.res-item:last-child{border-bottom:none}
+.res-item .yt{background:#ff0000;color:#fff;border-radius:4px;padding:2px 5px;font-size:9px;font-weight:700;flex-shrink:0}
+.res-item .kamp{background:var(--purple);color:#fff;border-radius:4px;padding:2px 5px;font-size:9px;font-weight:700;flex-shrink:0}
+.res-link{color:var(--accent);text-decoration:none;font-size:11px}
+
+/* SAVE INDICATOR */
+.save-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-left:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>YKS TAKIP <span class="save-dot" id="saveDot" title="Veriler kaydediliyor"></span></h1>
+    <p id="headerDate">Efe · yükleniyor...</p>
+  </div>
+  <div class="countdown">
+    <div class="d" id="cdDays">—</div>
+    <div class="l">gün kaldı</div>
+  </div>
+</div>
+
+<div class="tabs" id="tabBar">
+  <button class="tab active" data-tab="dashboard">🏠 Ana</button>
+  <button class="tab" data-tab="pomodoro">🍅 Pomodoro</button>
+  <button class="tab" data-tab="topics">📚 Konular</button>
+  ​<button class="tab" data-tab="ai">🤖 AI Koç</button>
+  <button class="tab" data-tab="weekly">📅 Program</button>
+  <button class="tab" data-tab="deneme">📝 Deneme</button>
+  <button class="tab" data-tab="resources">🎥 Kaynaklar</button>
+  <button class="tab" data-tab="stats">📊 Grafik</button>
+  <button class="tab" data-tab="telegram">📤 Rapor</button>
+  
+</div>
+
+<div class="scroll-area">
+
+<!-- DASHBOARD -->
+<div class="sec active" id="sec-dashboard">
+  <div class="mot-card" onclick="nextMotivation()">
+    <div class="mot-text" id="motText">Yükleniyor...</div>
+    <div class="mot-author" id="motAuthor"></div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="si">🍅</div><div class="sv" id="st1" style="color:var(--accent)">0</div><div class="sl">Pomodoro</div></div>
+    <div class="stat-box"><div class="si">☕</div><div class="sv" id="st2" style="color:var(--green)">0</div><div class="sl">Mola dk</div></div>
+    <div class="stat-box"><div class="si">📅</div><div class="sv" id="st3" style="color:var(--orange)">0</div><div class="sl">Bugün</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Genel İlerleme</div>
+    <div class="prog-wrap">
+      <div class="prog-header"><span id="ov1">0/0 konu</span><span id="ov2" style="color:var(--accent);font-weight:700">%0</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="ovBar" style="width:0%;background:var(--accent)"></div></div>
+    </div>
+  </div>
+  <div class="card"><div class="card-title">Dersler</div><div id="subjMini"></div></div>
+  <div class="card" id="lastExamCard" style="display:none">
+    <div class="card-title">Son Deneme</div>
+    <div id="lastExamInfo"></div>
+  </div>
+</div>
+
+<!-- POMODORO -->
+<div class="sec" id="sec-pomodoro">
+  <div class="card" style="text-align:center">
+    <div style="margin-bottom:6px">
+      <span id="pomTag" style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;background:rgba(79,124,255,.2);color:var(--accent)">ÇALIŞMA</span>
+    </div>
+    <div class="timer-wrap">
+      <svg width="180" height="180" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="10"/>
+        <circle id="timerRing" cx="100" cy="100" r="88" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="553" stroke-dashoffset="0" transform="rotate(-90 100 100)" style="transition:stroke-dashoffset .5s linear"/>
+        <text x="100" y="96" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="36" font-weight="700" fill="#e8e9f5" id="timerTxt">25:00</text>
+        <text x="100" y="116" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="600" fill="#6b6d8a" id="timerSub">odaklan</text>
+      </svg>
+    </div>
+    <div class="timer-ctrl">
+      <button class="btn btn-success" id="btnStart" onclick="toggleTimer()">▶ Başlat</button>
+      <button class="btn btn-ghost" onclick="resetTimer()">⟳ Sıfırla</button>
+    </div>
+    <div class="timer-quick">
+      <button class="btn btn-ghost" style="font-size:11px" onclick="setMode('work',25)">25 dk</button>
+      <button class="btn btn-ghost" style="font-size:11px" onclick="setMode('work',50)">50 dk</button>
+      <button class="btn btn-ghost" style="font-size:11px" onclick="setMode('break',5)">5 dk ☕</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Bugünkü Seanslar</div>
+    <div id="sessionList" style="font-size:12px;color:var(--text2);line-height:2.2">Henüz seans yok.</div>
+  </div>
+</div>
+
+<!-- TOPICS -->
+<div class="sec" id="sec-topics">
+  <div class="card">
+    <div class="card-title">Toplam İlerleme</div>
+    <div class="prog-wrap">
+      <div class="prog-header"><span id="topOv1">0/0</span><span id="topOv2" style="color:var(--green);font-weight:700">%0</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="topOvBar" style="width:0%;background:var(--green)"></div></div>
+    </div>
+  </div>
+  <div id="topicsList"></div>
+</div>
+
+<!-- WEEKLY PROGRAM -->
+<div class="sec" id="sec-weekly">
+  <div class="card">
+    <div class="card-title">Haftalık Program — Sürükle & Bırak</div>
+    <p style="font-size:11px;color:var(--text2);margin-bottom:10px">Ders bloklarını günlere sürükle. Dokunup basılı tut, sonra bırak.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px" id="blockPalette"></div>
+    <div class="week-grid" id="weekGrid"></div>
+    <button class="btn btn-ghost btn-full" onclick="clearWeekly()" style="margin-top:4px;font-size:12px">🗑 Programı Temizle</button>
+  </div>
+</div>
+
+<!-- DENEME -->
+<div class="sec" id="sec-deneme">
+  <div class="card">
+    <div class="card-title">Yeni Deneme Ekle</div>
+    <div class="inp-grp"><label>Sınav Adı</label><input id="exName" type="text" placeholder="TYT Deneme #1"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="inp-grp"><label>TYT Net</label><input id="exTyt" type="number" placeholder="0" min="0" max="120"/></div>
+      <div class="inp-grp"><label>AYT Net</label><input id="exAyt" type="number" placeholder="0" min="0" max="80"/></div>
+    </div>
+    <div class="inp-grp"><label>Tarih</label><input id="exDate" type="date"/></div>
+    <div class="inp-grp"><label>Not</label><input id="exNote" type="text" placeholder="Opsiyonel..."/></div>
+    <button class="btn btn-primary btn-full" onclick="addExam()">✚ Ekle</button>
+  </div>
+  <div id="examList"></div>
+</div>
+
+<!-- RESOURCES -->
+<div class="sec" id="sec-resources">
+  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;padding:0 2px">YKS için önerilen YouTube kanalları ve kamplar 🎯</div>
+  <div id="resourcesList"></div>
+</div>
+
+<!-- STATS -->
+<div class="sec" id="sec-stats">
+  <div class="card"><div class="card-title">Haftalık Pomodoro</div><div class="chart-wrap"><canvas id="weeklyChart"></canvas></div></div>
+  <div class="card"><div class="card-title">Deneme Netleri</div><div class="chart-wrap"><canvas id="examChart"></canvas></div></div>
+  <div class="card"><div class="card-title">Özet</div><div id="allStats" style="font-family:var(--fm);font-size:12px;line-height:2.2;color:var(--text2)"></div></div>
+</div>
+
+<!-- Ai-topic -->
+<div class="sec" id="sec-ai">
+  <div class="card">
+    <div class="card-title">🤖 AI Çalışma Koçu</div>
+    
+    <div id="chat-box" style="height:320px; overflow-y:auto; background:rgba(0,0,0,0.03); border-radius:8px; padding:12px; margin-bottom:12px; border:1px solid rgba(0,0,0,0.05); display:flex; flex-direction:column; gap:10px; font-size:14px;">
+      <div style="background:var(--accent); color:white; padding:8px 12px; border-radius:12px 12px 12px 0; align-self:flex-start; max-width:85%; box-shadow:0 2px 4px rgba(0,0,0,0.1)">
+        Selam Efe! Bugün hangi barajı aşıyoruz? 🔥
+      </div>
+    </div>
+    
+    <div class="inp-grp">
+      <label>Sorun veya Hedefin</label>
+      <input id="ai-input" type="text" placeholder="Örn: TYT Türkçe nasıl artar?" onkeypress="if(event.key==='Enter') askAI()"/>
+    </div>
+    
+    <button class="btn btn-primary btn-full" onclick="askAI()">🚀 AI'ya Sor</button>
+  </div>
+</div>
+
+
+
+
+
+<!-- TELEGRAM -->
+<div class="sec" id="sec-telegram">
+  <div class="card">
+    <div class="card-title">Telegram Ayarları</div>
+    <label style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px">Bot Token</label>
+    <input class="tg-inp" id="tgToken" type="text" placeholder="123456:ABC-DEF..."/>
+    <label style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px">Chat ID</label>
+    <input class="tg-inp" id="tgChatId" type="text" placeholder="-100xxxxxxxxx"/>
+    <button class="btn btn-ghost btn-full" onclick="saveTg()">💾 Kaydet</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Rapor Gönder</div>
+    <button class="btn btn-tg btn-full" onclick="sendReport('daily')" style="margin-bottom:6px">📤 Günlük Rapor</button>
+    <button class="btn btn-tg btn-full" onclick="sendReport('weekly')" style="margin-bottom:6px;opacity:.85">📊 Haftalık Özet</button>
+    <button class="btn btn-tg btn-full" onclick="sendReport('breaks')" style="opacity:.7">☕ Mola Raporu</button>
+    <div class="tg-status" id="tgStatus"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Rapor Önizleme</div>
+    <pre id="repPrev" style="font-family:var(--fm);font-size:10px;color:var(--text2);white-space:pre-wrap;line-height:1.7"></pre>
+  </div>
+</div>
+
+</div><!-- /scroll-area -->
+
+<script>
+// ═══════════════════════════════════════════════
+//  SABİT VERİLER
+// ═══════════════════════════════════════════════
+const YKS_DATE = new Date('2026-06-20');
+
+const TOPICS = {
+  "📐 Matematik TYT": ["Temel Kavramlar","Sayı Basamakları","Bölme-Bölünebilme","OBEB-OKEK","Asal Sayılar","Üslü Sayılar","Köklü Sayılar","Çarpanlara Ayırma","1.Derece Denklemler","Denklem Sistemleri","Eşitsizlikler","Mutlak Değer","Oran-Orantı","Yüzde-Faiz","Problemler (Yaş/İşçi/Havuz)","Kümeler","Mantık","Fonksiyonlar","Permütasyon-Kombinasyon","Olasılık","İstatistik","Sayı Dizileri"],
+  "📐 Matematik AYT": ["Polinomlar","2.Derece Denklemler","Trigonometri","Logaritma","Diziler (Aritmetik-Geometrik)","Limit","Türev","İntegral","Analitik Geometri","Çember","Karmaşık Sayılar","Matrisler"],
+  "🔬 Fizik TYT": ["Fizik Bilimine Giriş","Madde & Özellikleri","Kuvvet & Hareket","Enerji","Isı & Sıcaklık","Elektrostatik","Elektrik Akımı","Dalgalar & Ses","Optik Temelleri"],
+  "🔬 Fizik AYT": ["Vektörler","Kinematik","Dinamik (Newton Yasaları)","İş-Güç-Enerji","Momentum & Çarpışma","Basit Harmonik Hareket","Dalgalar","Geometrik Optik","Elektrik Alanı","Manyetizma","Elektromanyetik İndüksiyon","Modern Fizik","Atom & Nükleer Fizik"],
+  "⚗️ Kimya TYT": ["Kimya Bilimine Giriş","Atom Yapısı","Periyodik Tablo","Kimyasal Türler","Kimyasal Bağlar","Kimyasal Tepkimeler","Maddenin Halleri","Karışımlar","Asit-Baz (Temel)"],
+  "⚗️ Kimya AYT": ["Mol Kavramı","Gazlar","Çözeltiler","Kimyasal Denge","Asit-Baz Dengesi","Çözünürlük Dengesi","Elektrokimya","Reaksiyon Hızı","Organik Kimya Temelleri","Hidrokarbonlar","Oksijen & Azot Bileşikleri","Polimer & Biyomolekül"],
+  "🧬 Biyoloji TYT": ["Canlıların Ortak Özellikleri","Hücre","Canlıların Çeşitliliği","Ekosistem"],
+  "🧬 Biyoloji AYT": ["Hücre Biyolojisi","Hücre Bölünmeleri (Mitoz-Mayoz)","Kalıtım (Mendel)","Kalıtım (İleri)","DNA Yapısı & Replikasyon","RNA & Protein Sentezi","Mutasyon & Modifikasyon","Sinir Sistemi","Duyu Organları","Hormon Sistemi","Destek-Hareket","Sindirim Sistemi","Dolaşım & Bağışıklık","Solunum Sistemi","Boşaltım Sistemi","Üreme & Gelişme","Ekoloji","Evrim"],
+  "📚 Türkçe": ["Ses Bilgisi","Yazım Kuralları","Noktalama İşaretleri","İsim (Ad)","Sıfat","Zamir","Zarf","Edat-Bağlaç-Ünlem","Fiil (Eylem)","Fiilimsiler","Sözcükte Anlam","Cümlede Anlam","Cümle Türleri","Cümle Tahlili","Paragraf Yapısı","Ana Düşünce","Paragraf Tamamlama","Sözel Akıl Yürütme"],
+  "🏛️ Tarih": ["Tarih Bilimine Giriş","İlk Çağ Uygarlıkları","Orta Çağ","İslam Tarihi","Türklerin İslamiyet'i Kabulü","Osmanlı Kuruluş","Osmanlı Yükselme","Osmanlı Duraklama","Osmanlı Gerileme","Osmanlı Dağılma","I.Dünya Savaşı","Kurtuluş Savaşı","Türk İnkılabı","Atatürk İlkeleri","II.Dünya Savaşı","Soğuk Savaş","Yakın Dönem Türkiye"],
+  "🌍 Coğrafya": ["Harita Bilgisi","Dünya'nın Şekli & Hareketleri","Atmosfer & İklim","Hydrosphere (Su)","Lithosphere (Yer)","Nüfus & Yerleşme","Türkiye'nin Yer Şekilleri","Türkiye'nin İklimi","Türkiye Nüfusu","Tarım","Hayvancılık","Enerji & Maden","Sanayi","Ulaşım","Bölgeler","Küresel Ortam Sorunları"],
+  "⚖️ Felsefe & Din": ["Felsefeye Giriş","Epistemoloji","Ontoloji","Ahlak Felsefesi","Siyaset Felsefesi","Sanat Felsefesi","Din Felsefesi","Mantık","Hz. Muhammed'in Hayatı","Kuran'ın Temel Mesajları","İbadetler","Ahlak & Değerler"],
+};
+
+const MOTIVATIONS = [
+  {t:"Bugün ekmek yemek istiyorsan dün tohum ekmiş olman lazım.",a:"Çin Atasözü"},
+  {t:"Başarı, her gün tekrarlanan küçük çabaların toplamıdır.",a:"Robert Collier"},
+  {t:"Zorlu yollar güzel manzaralara çıkar.",a:"—"},
+  {t:"Sabah uyandığında düşün: bugün ne yapabilirim?",a:"Marcus Aurelius"},
+  {t:"Bir yıl sonra keşke bugün başlasaydım diyeceksin.",a:"—"},
+  {t:"Disiplin, motivasyon olmadığı zamanlarda devreye girer.",a:"—"},
+  {t:"Yavaş bile olsa ilerlemek, durmaktan iyidir.",a:"—"},
+  {t:"YKS bir maraton, yarın için bugün çalış.",a:"—"},
+  {t:"Kendine inan, yeterince çalışırsan başaramaycağın şey yok.",a:"—"},
+  {t:"Her uzman, bir zamanlar acemiydi.",a:"Helen Hayes"},
+  {t:"Zorlu yollar güzel manzaralara çıkar.",a:"—"},
+  {t:"Zorlu yollar güzel manzaralara çıkar.",a:"—"},
+  {t:"Fırtına ne kadar sertse, gökkuşağı o kadar parlak olur.",a:"—"},
+  {t:"En sarp kayalar, en sağlam duruşları doğurur.",a:"—"},
+  {t:"Yokuşta terlemeyen, inişte sefa süremez.",a:"—"},
+  {t:"Yıldızlar sadece karanlık çöktüğünde parlar.",a:"—"},
+  {t:"Demir, en sıcak ateşte dövülerek güçlenir.",a:"—"},
+  {t:"Zirveye uçarak değil, tırnaklarınla kazıyarak çıkılır.",a:"—"},
+  {t:"Yolun sonundaki ışık, yürümekten vazgeçmeyenler içindir.",a:"—"},
+  {t:"Dikenine katlanamadığın gülün kokusunu hak edemezsin.",a:"—"},
+  {t:"Büyük zaferler, en çetin savaşların ardından gelir.",a:"—"},
+  {t:"Sabır, acıdır ama meyvesi tatlıdır.",a:"—"},
+  {t:"Rüzgarın yönünü değiştiremiyorsan, yelkenlerini ona göre ayarla.",a:"—"},
+  {t:"Kırıldığın yerler, en güçlü olduğun yerlere dönüşür.",a:"—"},
+  {t:"Durmadığın sürece ne kadar yavaş gittiğinin önemi yoktur.",a:"—"},
+  {t:"En derin denizlerde en nadide inciler saklıdır.",a:"—"},
+  {t:"Kışın soğuğu olmadan baharın neşesi anlaşılmaz.",a:"—"},
+  {t:"Hayat, fırtınanın geçmesini beklemek değil, yağmurda dans etmeyi öğrenmektir.",a:"—"},
+  {t:"Güneş, her geceyi bir sabahla ödüllendirir.",a:"—"},
+  {t:"Yorgunluk geçer ama başarmış olmanın gururu baki kalır.",a:"—"},
+  {t:"Kendi yolunu çizenin rehberi cesaretidir.",a:"—"},
+  {t:"Zorluklar, yeteneği ortaya çıkaran birer fırsattır.",a:"—"},
+  {t:"Ekilmeyen topraktan mahsul beklenmez.",a:"—"},
+  {t:"Hayallerine giden yol, konfor alanının dışından geçer.",a:"—"},
+  {t:"Düşmek hata değil, düştüğün yerde kalmak hatadır.",a:"—"},
+  {t:"Yol seni nereye götürüyorsa oraya gitme, yol olmayan yerden git ki iz bırak.",a:"—"},
+  {t:"Umut, karanlıkta görebilen bir kuştur.",a:"—"},
+  {t:"Büyük işler, küçük başlangıçların istikrarıyla büyür.",a:"—"},
+  {t:"Zor zamanlar geçer ama güçlü insanlar kalır.",a:"—"},
+  {t:"Engeller, gözünü hedeften ayırdığında gördüğün korkunç şeylerdir.",a:"—"},
+  {t:"Dünün acısı, bugünün tecrübesidir.",a:"—"},
+  {t:"Kendi zirveni ancak kendi adımlarınla fethedebilirsin.",a:"—"},
+  {t:"Gerçek güç, pes etmemek için bir neden bulmaktır.",a:"—"},
+  {t:"Gelecek, bugünden hazırlananlarındır.",a:"—"},
+  {t:"Risk almazsan, sıradanlığa mahkum kalırsın.",a:"—"},
+  {t:"Kalbindeki inanç, yolundaki taştan daha büyüktür.",a:"—"},
+  {t:"Emek olmadan yemek, ter dökmeden zafer olmaz.",a:"—"},
+  {t:"Her bitiş, aslında yeni ve daha güçlü bir başlangıçtır.",a:"—"},
+  {t:"Gökyüzüne bakmayı unutma, sınırların orada bitmiyor.",a:"—"},
+  {t:"Zorluk, ruhun antrenmanıdır.",a:"—"},
+  {t:"Bugün ektiğin sabır, yarın biçeceğin mutluluktur.",a:"—"},
+];
+
+const RESOURCES = {
+  "📐 Matematik": [
+    {type:"yt",name:"Kenan Kara ile Geometri",desc:"Geometriyi ezberletmeyen, mantığını öğreten kanal",url:"https://youtube.com/@KenanKaraileGeometri"},
+    {type:"yt",name:"Mert Hoca",desc:"TYT/AYT Matematik ve Geometri kamplarının efendisi",url:"https://youtube.com/@merthoca"},
+    {type:"yt",name:"Rehber Matematik",desc:"TYT/AYT Matematik, bebek adımlarıyla sıfırdan anlatım",url:"https://youtube.com/@rehbermatematik"},
+    {type:"yt",name:"Bıyıklı Matematik",desc:"TYT/AYT tüm konular, sade anlatım",url:"https://youtube.com/@biyiklimatematik"},
+    {type:"yt",name:"Edutorial",desc:"AYT Matematik, detaylı konu anlatımı",url:"https://youtube.com/@edutorial"},
+    {type:"yt",name:"Hocalara Geldik",desc:"TYT-AYT Matematik Kampı",url:"https://hocalarageldik.com"},
+    {type:"yt",name:"Tonguç Akademi",desc:"Soru bankası & video ders",url:"https://tongucakademi.com"},
+  ],
+  "🔬 Fizik": [
+    {type:"yt",name:"Özcan Aykın",desc:"Deney ve animasyonlarla fizik mantığını kavratır",url:"https://youtube.com/@OzcanAykin"},
+    {type:"yt",name:"VIP Fizik",desc:"Fizik dersini görselleştirerek en basit haliyle anlatır",url:"https://youtube.com/@vipfizik"},
+    {type:"yt",name:"Fizik Hocam",desc:"TYT/AYT Fizik konu anlatımları",url:"https://youtube.com/@fizikhocam"},
+    {type:"yt",name:"Öğretmen TV - Fizik",desc:"Müfredat uyumlu dersler",url:"https://youtube.com/@ogretmentv"},
+    {type:"yt",name:"Hocalara Geldik Fizik",desc:"AYT Fizik kampı",url:"https://hocalarageldik.com"},
+  ],
+  "⚗️ Kimya": [
+    {type:"yt",name:"Kimya Adası",desc:"Enerjik anlatımıyla kimya konularını akılda kalıcı kılar",url:"https://youtube.com/@KimyaAdasi"},
+    {type:"yt",name:"Görkem Şahin",desc:"Kimyayı sevdiren, TYT/AYT Kimya konularında uzman",url:"https://youtube.com/@benimhocam"},
+    {type:"yt",name:"Kimya Hocam",desc:"TYT/AYT Kimya tüm konular",url:"https://youtube.com/@kimyahocam"},
+    {type:"yt",name:"Ders Hocam Kimya",desc:"Soru çözüm ağırlıklı",url:"https://youtube.com/@dershocam"},
+    {type:"yt",name:"Tonguç Akademi Kimya",desc:"Konu + soru videoları",url:"https://tongucakademi.com"},
+  ],
+  "🧬 Biyoloji": [
+    {type:"yt",name:"Dr. Biyoloji",desc:"Sistemler ve ileri düzey biyoloji için en iyisi",url:"https://youtube.com/@drbiyoloji"},
+    {type:"yt",name:"Selin Hoca",desc:"Biyoloji konularını sade ve akıcı bir dille özetler",url:"https://youtube.com/@selinhoca"},
+    {type:"yt",name:"Biyoloji Hocam",desc:"AYT Biyoloji tüm üniteler",url:"https://youtube.com/@biyolojihocam"},
+    {type:"yt",name:"Öğretmen TV - Biyoloji",desc:"Görsel destekli anlatım",url:"https://youtube.com/@ogretmentv"},
+    {type:"yt",name:"Hocalara Geldik Biyoloji",desc:"AYT Biyoloji kampı",url:"https://hocalarageldik.com"},
+  ],
+  "📚 Türkçe": [
+  {type:"yt",name:"Rüştü Hoca ile Türkçe",desc:"Dil bilgisinde taktiklerin ve pratik yolların adresi",url:"https://youtube.com/@RustuHocaileTurkce"},
+  {type:"yt",name:"Kadir Gümüş",desc:"Türk Dili ve Edebiyatı'nı hikayeleştirerek anlatır",url:"https://youtube.com/@benimhocam"},
+  ],
+  "🏛️ Tarih": [
+  {type:"yt",name:"Ramazan Yetgin",desc:"Tarih konularını kronolojik ve detaylı işler",url:"https://youtube.com/@benimhocam"},
+],
+};
+
+const BLOCK_COLORS = {
+  "📐 Mat":"#4f7cff","🔬 Fiz":"#2ecc8f","⚗️ Kim":"#ff8c42",
+  "🧬 Bio":"#a259ff","📚 Türkçe":"#ff4f6b","🏛️ Tarih":"#f1c40f",
+  "🌍 Coğ":"#1abc9c","⚖️ Fel":"#e67e22","😴 Mola":"#6b6d8a",
+};
+
+const DAYS = ["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"];
+
+// ═══════════════════════════════════════════════
+//  VERİ YÖNETİMİ — IndexedDB (kalıcı)
+// ═══════════════════════════════════════════════
+let D = null;
+
+function defaultData() {
+  const progress = {};
+  for (const [s,ts] of Object.entries(TOPICS))
+    progress[s] = Object.fromEntries(ts.map(t=>[t,false]));
+  return {
+    progress, totalPomodoros:0, totalBreakMin:0,
+    todayPomodoros:0, todayBreakMin:0,
+    todayDate:todayStr(), sessions:[], exams:[],
+    weekly:{}, weeklyPlan:{}, tgToken:'', tgChatId:'',
+  };
+}
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+// Çoklu kayıt — localStorage + cookie yedek
+function saveData(){
+  if(!D) return;
+  const json = JSON.stringify(D);
+  // 1) localStorage
+  try{ localStorage.setItem('yksData', json); } catch(e){}
+  // 2) sessionStorage yedek
+  try{ sessionStorage.setItem('yksData', json); } catch(e){}
+  // 3) cookie yedek (küçük veri için)
+  try{
+    const small = JSON.stringify({
+      totalPomodoros:D.totalPomodoros,
+      totalBreakMin:D.totalBreakMin,
+      todayPomodoros:D.todayPomodoros,
+      todayDate:D.todayDate,
+      tgToken:D.tgToken,
+      tgChatId:D.tgChatId,
+    });
+    document.cookie = 'yksSmall='+encodeURIComponent(small)+';max-age=31536000;path=/';
+  } catch(e){}
+  const dot = document.getElementById('saveDot');
+  if(dot) dot.style.background='var(--green)';
+}
+
+function loadData(){
+  let raw = null;
+  // 1) localStorage'dan dene
+  try{ raw = localStorage.getItem('yksData'); } catch(e){}
+  // 2) sessionStorage'dan dene
+  if(!raw){ try{ raw = sessionStorage.getItem('yksData'); } catch(e){} }
+  
+  if(raw){
+    try{
+      D = JSON.parse(raw);
+      for(const [s,ts] of Object.entries(TOPICS)){
+        if(!D.progress[s]) D.progress[s]={};
+        for(const t of ts)
+          if(D.progress[s][t]===undefined) D.progress[s][t]=false;
+      }
+      if(!D.weekly) D.weekly={};
+      if(!D.weeklyPlan) D.weeklyPlan={};
+    } catch(e){ D = defaultData(); }
+  } else {
+    D = defaultData();
+  }
+  resetDayIfNeeded();
+  init();
+}
+
+function resetDayIfNeeded(){
+  if(!D) return;
+  const td = todayStr();
+  if(D.todayDate !== td){
+    if(D.todayPomodoros>0)
+      D.sessions.push({date:D.todayDate,pomodoros:D.todayPomodoros,breakMin:D.todayBreakMin});
+    D.todayPomodoros=0; D.todayBreakMin=0; D.todayDate=td;
+    saveData();
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════════
+document.getElementById('tabBar').addEventListener('click', e=>{
+  const btn = e.target.closest('.tab');
+  if(!btn) return;
+  const tab = btn.dataset.tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('sec-'+tab).classList.add('active');
+  if(tab==='stats') renderCharts();
+  if(tab==='telegram') renderRepPrev();
+  if(tab==='resources') renderResources();
+  if(tab==='weekly') renderWeekly();
+});
+
+// ═══════════════════════════════════════════════
+//  COUNTDOWN
+// ═══════════════════════════════════════════════
+
+function updateCountdown(){
+  const diff = Math.ceil((YKS_DATE - new Date())/86400000);
+  document.getElementById('cdDays').textContent = diff>0?diff:'..';
+  
+}
+
+// ═══════════════════════════════════════════════
+//  MOTIVATION
+// ═══════════════════════════════════════════════
+let motIdx = Math.floor(Math.random()*MOTIVATIONS.length);
+function showMotivation(){
+  const m = MOTIVATIONS[motIdx];
+  document.getElementById('motText').textContent = m.t;
+  document.getElementById('motAuthor').textContent = '— '+m.a;
+}
+function nextMotivation(){
+  motIdx = (motIdx+1)%MOTIVATIONS.length;
+  showMotivation();
+}
+setInterval(nextMotivation, 30000);
+
+// ═══════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════
+function renderDashboard(){
+  if(!D) return;
+  document.getElementById('headerDate').textContent =
+    'Efe · '+new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('st1').textContent = D.totalPomodoros;
+  document.getElementById('st2').textContent = D.totalBreakMin;
+  document.getElementById('st3').textContent = D.todayPomodoros;
+
+  const {done,total} = overallProg();
+  const pct = total?Math.round(done/total*100):0;
+  document.getElementById('ov1').textContent = `${done}/${total} konu`;
+  document.getElementById('ov2').textContent = `%${pct}`;
+  document.getElementById('ovBar').style.width = pct+'%';
+
+  const el = document.getElementById('subjMini');
+  el.innerHTML='';
+  for(const s of Object.keys(TOPICS)){
+    const {done:d,total:t} = subjProg(s);
+    const p = t?Math.round(d/t*100):0;
+    el.innerHTML+=`<div class="prog-wrap" style="margin-bottom:9px">
+      <div class="prog-header"><span style="font-size:11px">${s}</span><span style="font-size:10px;color:var(--text2)">${d}/${t}</span></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${p}%;background:var(--accent)"></div></div></div>`;
+  }
+
+  if(D.exams.length>0){
+    const last = D.exams[D.exams.length-1];
+    document.getElementById('lastExamCard').style.display='block';
+    document.getElementById('lastExamInfo').innerHTML=
+      `<div style="font-size:13px;font-weight:700">${last.name}</div>
+       <div style="font-family:var(--fm);font-size:20px;color:var(--accent);margin:3px 0">TYT: ${last.tyt} · AYT: ${last.ayt}</div>
+       <div style="font-size:10px;color:var(--text2)">${last.date}${last.note?' · '+last.note:''}</div>`;
+  }
+}
+
+function subjProg(s){ const topics=D.progress[s]; const done=Object.values(topics).filter(Boolean).length; return{done,total:Object.keys(topics).length}; }
+function overallProg(){ let done=0,total=0; for(const s of Object.keys(TOPICS)){const p=subjProg(s);done+=p.done;total+=p.total;} return{done,total}; }
+
+// ═══════════════════════════════════════════════
+//  POMODORO
+// ═══════════════════════════════════════════════
+let timerInt=null, timerRem=25*60, timerTotal=25*60, timerOn=false, timerMode='work';
+const CIRC=553;
+
+function setMode(mode,mins){
+  resetTimer();
+  timerMode=mode; timerRem=mins*60; timerTotal=mins*60;
+  const tag=document.getElementById('pomTag');
+  const ring=document.getElementById('timerRing');
+  const sub=document.getElementById('timerSub');
+  if(mode==='break'){
+    tag.textContent='MOLA'; tag.style.background='rgba(46,204,143,.2)'; tag.style.color='var(--green)';
+    ring.style.stroke='var(--green)'; sub.textContent='dinlen';
+  } else {
+    tag.textContent='ÇALIŞMA'; tag.style.background='rgba(79,124,255,.2)'; tag.style.color='var(--accent)';
+    ring.style.stroke='var(--accent)'; sub.textContent='odaklan';
+  }
+  updateTimerUI();
+}
+
+function toggleTimer(){ timerOn?pauseTimer():startTimer(); }
+
+function startTimer(){
+  timerOn=true;
+  const btn=document.getElementById('btnStart');
+  btn.textContent='⏸ Durdur'; btn.style.background='var(--orange)';
+  timerInt=setInterval(tick,1000);
+}
+
+function pauseTimer(){
+  timerOn=false;
+  const btn=document.getElementById('btnStart');
+  btn.textContent='▶ Devam'; btn.style.background='var(--green)';
+  clearInterval(timerInt);
+}
+
+function resetTimer(){
+  pauseTimer(); timerRem=timerTotal;
+  document.getElementById('btnStart').textContent='▶ Başlat';
+  document.getElementById('btnStart').style.background='var(--green)';
+  updateTimerUI();
+}
+
+function tick(){
+  timerRem--;
+  if(timerRem<=0){ clearInterval(timerInt); timerOn=false; sessionDone(); }
+  updateTimerUI();
+}
+
+function sessionDone(){
+  if(timerMode==='work'){
+    D.totalPomodoros++; D.todayPomodoros++;
+    const td=todayStr(); D.weekly[td]=(D.weekly[td]||0)+1;
+    saveData(); renderDashboard(); updateSessionList();
+    notify('🍅 Pomodoro bitti! Mola zamanı.');
+    setMode('break',5);
+  } else {
+    const mins=Math.round(timerTotal/60);
+    D.totalBreakMin+=mins; D.todayBreakMin+=mins;
+    saveData(); renderDashboard();
+    notify('☕ Mola bitti! Çalışmaya devam.');
+    setMode('work',25);
+  }
+  document.getElementById('btnStart').textContent='▶ Başlat';
+}
+
+function updateTimerUI(){
+  const m=Math.floor(timerRem/60), s=timerRem%60;
+  document.getElementById('timerTxt').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('timerRing').style.strokeDashoffset = CIRC*(1-timerRem/timerTotal);
+}
+
+function updateSessionList(){
+  const el=document.getElementById('sessionList');
+  if(!D.todayPomodoros){el.textContent='Henüz seans yok.';return;}
+  el.innerHTML=Array.from({length:D.todayPomodoros},(_,i)=>`<span>🍅 Seans ${i+1}  </span>`).join('');
+}
+
+function notify(msg){
+  if('Notification' in window && Notification.permission==='granted')
+    new Notification('YKS Çalışma',{body:msg});
+}
+if('Notification' in window) Notification.requestPermission();
+
+// ═══════════════════════════════════════════════
+//  TOPICS
+// ═══════════════════════════════════════════════
+function renderTopics(){
+  if(!D) return;
+  const {done,total}=overallProg();
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('topOv1').textContent=`${done}/${total}`;
+  document.getElementById('topOv2').textContent=`%${pct}`;
+  document.getElementById('topOvBar').style.width=pct+'%';
+
+  const el=document.getElementById('topicsList');
+  el.innerHTML='';
+  for(const [subject,topics] of Object.entries(TOPICS)){
+    const {done:d,total:t}=subjProg(subject);
+    const p=t?Math.round(d/t*100):0;
+    const id='s_'+subject.replace(/\W/g,'_');
+    let rows='';
+    for(const topic of topics){
+      const isDone=D.progress[subject][topic];
+      rows+=`<div class="topic-row ${isDone?'done':''}" onclick="toggleTopic('${subject.replace(/'/g,"\\'")}','${topic.replace(/'/g,"\\'")}')">
+        <div class="topic-cb">${isDone?'✓':''}</div>
+        <span class="topic-nm">${topic}</span>
+      </div>`;
+    }
+    el.innerHTML+=`
+      <div class="subj-hdr" onclick="toggleSubj('${id}')">
+        <span class="sn">${subject}</span>
+        <span class="sp">${d}/${t} · %${p}</span>
+      </div>
+      <div class="subj-topics" id="${id}">${rows}</div>`;
+  }
+}
+
+function toggleSubj(id){document.getElementById(id).classList.toggle('open');}
+
+function toggleTopic(subject,topic){
+  D.progress[subject][topic]=!D.progress[subject][topic];
+  saveData(); renderTopics(); renderDashboard();
+}
+
+// ═══════════════════════════════════════════════
+//  WEEKLY SCHEDULE — DRAG & DROP (touch destekli)
+// ═══════════════════════════════════════════════
+let dragBlock=null, dragSource=null, touchStartX=0, touchStartY=0;
+
+function renderWeekly(){
+  if(!D) return;
+  // Palet
+  const pal=document.getElementById('blockPalette');
+  pal.innerHTML='';
+  for(const [name,color] of Object.entries(BLOCK_COLORS)){
+    const b=document.createElement('div');
+    b.className='week-block';
+    b.textContent=name;
+    b.style.cssText=`background:${color}22;border:1px solid ${color}66;color:${color};padding:6px 10px;font-size:10px;cursor:grab`;
+    b.draggable=true;
+    b.dataset.block=name;
+    b.dataset.color=color;
+    b.addEventListener('dragstart',onDragStart);
+    b.addEventListener('touchstart',onTouchStart,{passive:true});
+    pal.appendChild(b);
+  }
+
+  // Grid
+  const grid=document.getElementById('weekGrid');
+  grid.innerHTML='';
+  for(let i=0;i<7;i++){
+    const col=document.createElement('div');
+    col.className='day-col';
+    col.dataset.day=i;
+    col.innerHTML=`<div class="day-label">${DAYS[i]}</div>`;
+
+    // Kayıtlı blokları ekle
+    const blocks=D.weeklyPlan[i]||[];
+    for(const b of blocks) col.appendChild(makeBlock(b.name,b.color,true));
+
+    col.addEventListener('dragover',e=>{e.preventDefault();col.classList.add('drag-over');});
+    col.addEventListener('dragleave',()=>col.classList.remove('drag-over'));
+    col.addEventListener('drop',e=>{e.preventDefault();onDrop(e,col);});
+    col.addEventListener('touchend',e=>onTouchEnd(e,col));
+    grid.appendChild(col);
+  }
+}
+
+function makeBlock(name,color,removable){
+  const b=document.createElement('div');
+  b.className='week-block';
+  b.textContent=name;
+  b.style.cssText=`background:${color}33;border:1px solid ${color}88;color:${color};font-size:9px;padding:5px 3px`;
+  b.dataset.block=name; b.dataset.color=color;
+  b.draggable=true;
+  if(removable){
+    b.title='Kaldırmak için çift tıkla';
+    b.addEventListener('dblclick',()=>removeBlock(b));
+    b.addEventListener('touchstart',handleLongPress,{passive:true});
+  }
+  b.addEventListener('dragstart',onDragStart);
+  b.addEventListener('touchstart',onTouchStart,{passive:true});
+  return b;
+}
+
+let longPressTimer=null;
+function handleLongPress(e){
+  const b=e.currentTarget;
+  longPressTimer=setTimeout(()=>{ removeBlock(b); },600);
+}
+document.addEventListener('touchend',()=>clearTimeout(longPressTimer));
+
+function removeBlock(b){
+  const col=b.closest('.day-col');
+  if(!col) return;
+  b.style.animation='fadeOut .2s ease forwards';
+  setTimeout(()=>{
+    b.remove();
+    saveWeeklyPlan();
+  },200);
+}
+
+function onDragStart(e){
+  dragBlock=e.currentTarget;
+  dragSource=dragBlock.closest('.day-col');
+  setTimeout(()=>dragBlock.classList.add('dragging'),0);
+}
+
+document.addEventListener('dragend',()=>{
+  if(dragBlock) dragBlock.classList.remove('dragging');
+  document.querySelectorAll('.day-col').forEach(c=>c.classList.remove('drag-over'));
+  dragBlock=null; dragSource=null;
+});
+
+function onDrop(e,col){
+  col.classList.remove('drag-over');
+  if(!dragBlock) return;
+  const name=dragBlock.dataset.block;
+  const color=dragBlock.dataset.color;
+  // Paletten mi geliyor? → kopyala. Günden mi? → taşı
+  if(dragSource && dragSource.classList.contains('day-col') && dragSource!==col){
+    dragBlock.remove();
+  }
+  if(!dragSource || !dragSource.classList.contains('day-col') || dragSource!==col){
+    col.appendChild(makeBlock(name,color,true));
+    saveWeeklyPlan();
+  }
+}
+
+// Touch drag
+let touchClone=null;
+function onTouchStart(e){
+  const b=e.currentTarget;
+  touchStartX=e.touches[0].clientX;
+  touchStartY=e.touches[0].clientY;
+  dragBlock=b;
+  dragSource=b.closest('.day-col');
+
+  touchClone=b.cloneNode(true);
+  touchClone.style.cssText+=`;position:fixed;opacity:.8;pointer-events:none;z-index:9999;transform:scale(1.05)`;
+  document.body.appendChild(touchClone);
+
+  const onMove=e=>{
+    const x=e.touches[0].clientX, y=e.touches[0].clientY;
+    touchClone.style.left=(x-30)+'px'; touchClone.style.top=(y-20)+'px';
+    // Highlight drop target
+    document.querySelectorAll('.day-col').forEach(c=>c.classList.remove('drag-over'));
+    const el=document.elementFromPoint(x,y);
+    const col=el?.closest('.day-col');
+    if(col) col.classList.add('drag-over');
+  };
+  const onEnd=e=>{
+    document.removeEventListener('touchmove',onMove);
+    document.removeEventListener('touchend',onEnd);
+    if(touchClone){touchClone.remove();touchClone=null;}
+    document.querySelectorAll('.day-col').forEach(c=>c.classList.remove('drag-over'));
+    const x=e.changedTouches[0].clientX, y=e.changedTouches[0].clientY;
+    const el=document.elementFromPoint(x,y);
+    const col=el?.closest('.day-col');
+    if(col){
+      if(dragSource && dragSource.classList.contains('day-col') && dragSource!==col)
+        dragBlock.remove();
+      if(!dragSource || !dragSource.classList.contains('day-col') || dragSource!==col)
+        col.appendChild(makeBlock(dragBlock.dataset.block,dragBlock.dataset.color,true));
+      saveWeeklyPlan();
+    }
+    dragBlock=null; dragSource=null;
+  };
+  document.addEventListener('touchmove',onMove,{passive:true});
+  document.addEventListener('touchend',onEnd);
+}
+
+function onTouchEnd(e,col){}
+
+function saveWeeklyPlan(){
+  D.weeklyPlan={};
+  document.querySelectorAll('.day-col').forEach(col=>{
+    const day=col.dataset.day;
+    const blocks=[...col.querySelectorAll('.week-block')].map(b=>({name:b.dataset.block,color:b.dataset.color}));
+    if(blocks.length) D.weeklyPlan[day]=blocks;
+  });
+  saveData();
+}
+
+function clearWeekly(){
+  D.weeklyPlan={};
+  saveData(); renderWeekly();
+}
+
+// ═══════════════════════════════════════════════
+//  DENEME
+// ═══════════════════════════════════════════════
+function addExam(){
+  const name=document.getElementById('exName').value.trim()||'Deneme';
+  const tyt=parseFloat(document.getElementById('exTyt').value)||0;
+  const ayt=parseFloat(document.getElementById('exAyt').value)||0;
+  const date=document.getElementById('exDate').value||todayStr();
+  const note=document.getElementById('exNote').value.trim();
+  D.exams.push({name,tyt,ayt,date,note});
+  saveData(); renderExams(); renderDashboard();
+  ['exName','exTyt','exAyt','exNote'].forEach(id=>document.getElementById(id).value='');
+}
+
+function renderExams(){
+  const el=document.getElementById('examList');
+  if(!D.exams.length){el.innerHTML='<div style="color:var(--text2);font-size:12px;text-align:center;padding:16px">Henüz deneme eklenmedi.</div>';return;}
+  el.innerHTML=[...D.exams].reverse().map(e=>`
+    <div class="exam-item">
+      <div><div style="font-weight:700;font-size:13px">${e.name}</div><div style="font-size:10px;color:var(--text2)">${e.date}${e.note?' · '+e.note:''}</div></div>
+      <div style="text-align:right"><div class="escore">TYT: ${e.tyt}</div><div style="font-family:var(--fm);font-size:13px;color:var(--purple)">AYT: ${e.ayt}</div></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+//  RESOURCES
+// ═══════════════════════════════════════════════
+function renderResources(){
+  const el=document.getElementById('resourcesList');
+  if(el.innerHTML) return; // Bir kez render et
+  let html='';
+  for(const [subject,items] of Object.entries(RESOURCES)){
+    html+=`<div class="res-card"><div class="rc-title">${subject}</div>`;
+    for(const item of items){
+      html+=`<div class="res-item">
+        <span class="${item.type==='yt'?'yt':'kamp'}">${item.type==='yt'?'YT':'KAMP'}</span>
+        <div>
+          <div style="font-weight:700">${item.name}</div>
+          <div style="font-size:10px;color:var(--text2)">${item.desc}</div>
+          <a class="res-link" href="${item.url}" target="_blank">→ Ziyaret Et</a>
+        </div>
+      </div>`;
+    }
+    html+='</div>';
+  }
+  el.innerHTML=html;
+}
+
+// ═══════════════════════════════════════════════
+//  CHARTS
+// ═══════════════════════════════════════════════
+let wChart=null, eChart=null;
+function renderCharts(){
+  if(!D) return;
+  const days=[],counts=[];
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const key=d.toISOString().slice(0,10);
+    days.push(d.toLocaleDateString('tr-TR',{weekday:'short'}));
+    counts.push(D.weekly[key]||0);
+  }
+  const co={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#6b6d8a',font:{family:'JetBrains Mono',size:10}}},
+            y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#6b6d8a',font:{family:'JetBrains Mono',size:10}},beginAtZero:true}}};
+  if(wChart) wChart.destroy();
+  wChart=new Chart(document.getElementById('weeklyChart'),{type:'bar',data:{labels:days,datasets:[{data:counts,backgroundColor:'rgba(79,124,255,.7)',borderRadius:5,borderSkipped:false}]},options:co});
+  if(eChart) eChart.destroy();
+  const exL=D.exams.slice(-8).map(e=>e.date.slice(5));
+  const exT=D.exams.slice(-8).map(e=>e.tyt);
+  const exA=D.exams.slice(-8).map(e=>e.ayt);
+  eChart=new Chart(document.getElementById('examChart'),{type:'line',data:{labels:exL.length?exL:['—'],datasets:[
+    {label:'TYT',data:exT,borderColor:'var(--accent)',backgroundColor:'rgba(79,124,255,.1)',tension:.4,fill:true,pointRadius:3},
+    {label:'AYT',data:exA,borderColor:'var(--purple)',backgroundColor:'rgba(162,89,255,.1)',tension:.4,fill:true,pointRadius:3}
+  ]},options:{...co,plugins:{legend:{display:true,labels:{color:'#6b6d8a',font:{family:'JetBrains Mono',size:10}}}}}});
+  const {done,total}=overallProg();
+  document.getElementById('allStats').innerHTML=
+    `🍅 Toplam Pomodoro   → ${D.totalPomodoros}\n` +
+    `☕ Toplam Mola       → ${D.totalBreakMin} dk\n` +
+    `📅 Bugünkü Pomodoro  → ${D.todayPomodoros}\n` +
+    `📝 Deneme Sayısı     → ${D.exams.length}\n` +
+    `📚 Tamamlanan Konu   → ${done}/${total}\n` +
+    `🎯 Genel İlerleme    → %${total?Math.round(done/total*100):0}`;
+}
+
+// ═══════════════════════════════════════════════
+//  TELEGRAM
+// ═══════════════════════════════════════════════
+function saveTg(){
+  D.tgToken=document.getElementById('tgToken').value.trim();
+  D.tgChatId=document.getElementById('tgChatId').value.trim();
+  saveData(); showTgSt('✅ Kaydedildi!','ok');
+}
+
+function buildReport(type){
+  const now=new Date().toLocaleString('tr-TR');
+  const {done,total}=overallProg();
+  const pct=total?Math.round(done/total*100):0;
+  let lines=[`📊 YKS Raporu — Efe`,`🕐 ${now}`,``];
+  if(type==='daily'||type==='breaks'){
+    lines.push(`🍅 Bugün: ${D.todayPomodoros} pomodoro`);
+    lines.push(`☕ Bugün: ${D.todayBreakMin} dk mola`);
+    lines.push(`🍅 Toplam: ${D.totalPomodoros} pomodoro`);
+    lines.push(`☕ Toplam: ${D.totalBreakMin} dk mola`);
+  }
+  if(type==='weekly'){
+    lines.push(`📅 Bu Hafta:`);
+    for(let i=6;i>=0;i--){
+      const d=new Date(); d.setDate(d.getDate()-i);
+      const key=d.toISOString().slice(0,10);
+      const cnt=D.weekly[key]||0;
+      lines.push(`  ${key.slice(5)} → ${'🍅'.repeat(Math.min(cnt,10))||'—'} (${cnt})`);
+    }
+  }
+  lines.push(``);
+  lines.push(`📈 Genel: ${done}/${total} konu (%${pct})`);
+  lines.push(``);
+  for(const s of Object.keys(TOPICS)){
+    const {done:d,total:t}=subjProg(s);
+    const p=t?Math.round(d/t*100):0;
+    lines.push(`${s}: ${'█'.repeat(Math.floor(p/10))}${'░'.repeat(10-Math.floor(p/10))} %${p}`);
+  }
+  if(D.exams.length>0){
+    const last=D.exams[D.exams.length-1];
+    lines.push(`\n📝 Son: ${last.name} — TYT:${last.tyt} AYT:${last.ayt}`);
+  }
+  return lines.join('\n');
+}
+
+function renderRepPrev(){
+  if(D.tgToken) document.getElementById('tgToken').value=D.tgToken;
+  if(D.tgChatId) document.getElementById('tgChatId').value=D.tgChatId;
+  document.getElementById('repPrev').textContent=buildReport('daily');
+}
+
+async function sendReport(type){
+  const token=document.getElementById('tgToken').value.trim()||D.tgToken;
+  const chatId=document.getElementById('tgChatId').value.trim()||D.tgChatId;
+  if(!token||!chatId){showTgSt('❌ Token veya Chat ID eksik!','err');return;}
+  showTgSt('⏳ Gönderiliyor...','ok');
+  try{
+    const res=await fetch(`https://api.telegram.org/bot${token}/sendMessage`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:chatId,text:buildReport(type)})
+    });
+    const j=await res.json();
+    if(j.ok) showTgSt('✅ Rapor gönderildi!','ok');
+    else showTgSt('❌ '+j.description,'err');
+  } catch(e){ showTgSt('❌ Bağlantı hatası','err'); }
+}
+
+function showTgSt(msg,type){
+  const el=document.getElementById('tgStatus');
+  el.textContent=msg; el.className='tg-status '+type;
+}
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+function init(){
+  updateCountdown();
+  showMotivation();
+  renderDashboard();
+  renderTopics();
+  renderExams();
+  updateTimerUI();
+  updateSessionList();
+  document.getElementById('exDate').value=todayStr();
+}
+
+loadData();
+
+// AI SOHBET MOTORU (Bunu en alta script içine yapıştır)
+function askAI() {
+  const input = document.getElementById('ai-input');
+  const box = document.getElementById('chat-box');
+  const userMsg = input.value.trim();
+  if (!userMsg) return;
+
+  // 1. Kullanıcı mesajını ekle
+  box.innerHTML += `<div style="background:#fff; color:#333; padding:8px 12px; border-radius:12px 12px 0 12px; align-self:flex-end; max-width:85%; border:1px solid #eee; margin-bottom:5px;">${userMsg}</div>`;
+  input.value = '';
+
+  // 2. AI Düşünme Simülasyonu
+  setTimeout(() => {
+    // --- ZEKA VERİ SETİ ---
+    const dataSet = {
+      selam: ["Ooo Efe hoş geldin! 🔥", "Selam kanka, bugün atomu parçalıyor muyuz?", "Hoş geldin şampiyon, ne durumdayız?"],
+      ders: ["Bugün %DERS% çalışmak için harika bir gün değil mi?", "Netlerin %DERS% yüzünden düşük geliyorsa üstüne gitmelisin.", "Bence şu an %DERS% yerine biraz paragraf bakmalısın."],
+      motivasyon: ["Bak Efe, rakiplerin şu an çalışıyor. Sen ne yapıyorsun? 👀", "Sınav günü 'keşke' dememek için şimdi 'iyi ki' de kanka!", "Yorulmuş olabilirsin ama pes etmek sana yakışmaz."],
+      analiz: [`Bugün ${D.todayPomodoros} pomodoro yapmışsın. `, `Serin şu an ${D.streak} gün. `]
+    };
+
+    const dersler = ["Matematik", "Türkçe", "Fizik", "Biyoloji", "Tarih"];
+    const msg = userMsg.toLowerCase();
+    let finalCevap = "";
+
+    // --- MANTIKSAL KARAR MOTORU ---
+    if(msg.includes("selam") || msg.includes("merhaba")) {
+      finalCevap = dataSet.selam[Math.floor(Math.random()*dataSet.selam.length)];
+    } 
+    else if(msg.includes("ne çalış") || msg.includes("plan") || msg.includes("program")) {
+      let onerilenDers = dersler[Math.floor(Math.random()*dersler.length)];
+      finalCevap = dataSet.analiz[0] + dataSet.ders[Math.floor(Math.random()*dataSet.ders.length)].replace("%DERS%", onerilenDers);
+    }
+    else if(msg.includes("nasılım") || msg.includes("durum")) {
+      finalCevap = dataSet.analiz[1] + (D.streak > 3 ? "Böyle devam edersen derece hayal değil!" : "Biraz daha istikrar lazım Efe, asıl şuna!");
+    }
+    else {
+      // Karmaşık bir cevap oluşturma (Mixer)
+      let rMot = dataSet.motivasyon[Math.floor(Math.random()*dataSet.motivasyon.length)];
+      let rDers = dersler[Math.floor(Math.random()*dersler.length)];
+      finalCevap = `Bak Efe, ${rMot} Özellikle ${rDers} konusunu boşlama.`;
+    }
+
+    // 3. Ekrana Bas
+    box.innerHTML += `<div style="background:var(--accent); color:white; padding:10px 14px; border-radius:12px 12px 12px 0; align-self:flex-start; max-width:85%; box-shadow:0 4px 8px rgba(0,0,0,0.1); line-height:1.4;">
+      <b>AI Koç:</b> ${finalCevap}
+    </div>`;
+    box.scrollTop = box.scrollHeight;
+  }, 400);
+}
+
+
+</script>
+</body>
+</html>
