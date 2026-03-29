@@ -2,516 +2,529 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>YKS 2026 — Efe V6</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YKS — Efe</title>
+    <!-- Modern & Clean Font: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         :root {
-            --bg: #05060a; --sf: #0d0e1a; --sf2: #15172b; --bd: #1e203d;
-            --ac: #4f7cff; --gr: #2ecc8f; --or: #ff8c42; --rd: #ff4f6b;
-            --pu: #a259ff; --tx: #f0f2faff; --t2: #8084a8;
+            --bg: #0a0a0c;
+            --surface: #141416;
+            --border: #27272a;
+            --primary: #3b82f6; /* Soft Blue */
+            --success: #10b981;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --accent: #6366f1;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
         body {
-            background: var(--bg); color: var(--tx); font-family: 'Syne', sans-serif;
-            overflow: hidden; height: 100vh; display: flex; flex-direction: column;
-            line-height: 1.4;
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
         }
 
-        /* 9:16 App Container Feel */
-        @media (min-width: 500px) {
-            body { width: 400px; margin: 0 auto; border-left: 1px solid var(--bd); border-right: 1px solid var(--bd); }
+        /* 9:16 Mobile View */
+        .app-container {
+            width: 100%;
+            max-width: 450px; /* Standart Mobile Width */
+            height: 100vh;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
         }
 
-        /* Header & Logo */
+        /* Header */
         header {
-            padding: 20px; background: rgba(5, 6, 10, 0.8); backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--bd); display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+            padding: 24px 20px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
 
-        .logo-wrap { display: flex; align-items: center; gap: 10px; }
-        .tomato-logo {
-            width: 32px; height: 32px; background: var(--rd); border-radius: 50%;
-            position: relative; box-shadow: 0 0 15px rgba(255, 79, 107, 0.5);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .tomato-logo::before {
-            content: ''; position: absolute; top: -4px; width: 8px; height: 8px;
-            background: var(--gr); clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-        }
+        .h-left h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+        .h-left p { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
 
-        .h-text h1 { font-size: 1rem; font-weight: 800; letter-spacing: -0.5px; }
-        .h-text p { font-size: 0.65rem; color: var(--t2); font-family: 'JetBrains Mono'; }
-
-        /* Stats Bar */
-        .top-stats { display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; scrollbar-width: none; }
-        .stat-pill {
-            background: var(--sf); border: 1px solid var(--bd); padding: 8px 15px;
-            border-radius: 20px; display: flex; align-items: center; gap: 8px; white-space: nowrap;
+        .yks-badge {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 8px;
+            text-align: right;
         }
-        .stat-pill i { font-size: 0.8rem; }
-        .stat-pill b { font-family: 'JetBrains Mono'; font-size: 0.9rem; color: var(--ac); }
+        .yks-badge b { color: var(--primary); font-size: 1.1rem; display: block; }
+        .yks-badge span { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); }
 
-        /* Main Nav - Bottom Fixed Like App */
-        nav {
-            position: fixed; bottom: 0; width: 100%; max-width: 400px;
-            background: rgba(13, 14, 26, 0.95); backdrop-filter: blur(20px);
-            border-top: 1px solid var(--bd); display: flex; justify-content: space-around;
-            padding: 10px 0 25px; z-index: 1000;
+        /* Main Content */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 20px 100px;
+            scrollbar-width: none;
         }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-            color: var(--t2); cursor: pointer; transition: 0.3s;
-        }
-        .nav-item.active { color: var(--ac); }
-        .nav-item svg { width: 20px; height: 20px; fill: currentColor; }
-        .nav-item span { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
+        main::-webkit-scrollbar { display: none; }
 
-        /* Content Sections */
-        main { flex: 1; overflow-y: auto; padding: 0 20px 100px; }
-        .page { display: none; animation: slideIn 0.3s ease-out; }
-        .page.active { display: block; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Cards & Glassmorphism */
+        /* Professional Cards */
         .card {
-            background: var(--sf); border: 1px solid var(--bd); border-radius: 20px;
-            padding: 20px; margin-bottom: 15px; position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
         }
-        .card-label { font-size: 0.6rem; color: var(--t2); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .card-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+            display: block;
+        }
 
-        /* Pomodoro Timer V6 */
-        .timer-container { text-align: center; padding: 20px 0; }
-        .timer-circle {
-            width: 240px; height: 240px; margin: 0 auto; position: relative;
-            display: flex; align-items: center; justify-content: center;
+        /* Pomodoro Timer - Minimalist */
+        .timer-box {
+            text-align: center;
+            padding: 40px 0;
         }
-        .timer-svg { transform: rotate(-90deg); width: 100%; height: 100%; position: absolute; }
-        .timer-bg { fill: none; stroke: var(--sf2); stroke-width: 6; }
-        .timer-bar { 
-            fill: none; stroke: var(--ac); stroke-width: 6; stroke-linecap: round; 
-            stroke-dasharray: 691; stroke-dashoffset: 0; transition: 1s linear; 
-            filter: drop-shadow(0 0 5px var(--ac));
+        .time-display {
+            font-size: 4.5rem;
+            font-weight: 300;
+            letter-spacing: -0.05em;
+            margin-bottom: 20px;
         }
-        .timer-display { font-family: 'JetBrains Mono'; font-size: 3.5rem; font-weight: 700; z-index: 5; }
-
-        /* Sound Player */
-        .music-player {
-            display: flex; justify-content: center; gap: 15px; margin-top: 20px;
-            background: var(--sf2); padding: 10px; border-radius: 50px;
-        }
-        .music-btn {
-            width: 35px; height: 35px; border-radius: 50%; border: none;
-            background: var(--bd); color: var(--tx); cursor: pointer; font-size: 0.8rem;
-        }
-        .music-btn.playing { background: var(--ac); box-shadow: 0 0 10px var(--ac); }
-
-        /* Modern Topics */
-        .topic-card {
-            background: var(--sf2); border-radius: 15px; padding: 15px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-left: 4px solid var(--bd); transition: 0.3s;
-        }
-        .topic-card.done { border-left-color: var(--gr); background: rgba(46, 204, 143, 0.05); }
-        .topic-info h4 { font-size: 0.85rem; }
-        .topic-info p { font-size: 0.7rem; color: var(--t2); }
-        .check-btn {
-            width: 25px; height: 25px; border-radius: 50%; border: 2px solid var(--bd);
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
-        .topic-card.done .check-btn { background: var(--gr); border-color: var(--gr); color: #fff; }
-
-        /* Program V6 - List Style */
-        .agenda-item {
-            display: flex; gap: 15px; margin-bottom: 20px; position: relative;
-        }
-        .agenda-time { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--ac); width: 40px; padding-top: 5px; }
-        .agenda-content {
-            flex: 1; background: var(--sf); border: 1px solid var(--bd); padding: 15px;
-            border-radius: 15px; border-left: 3px solid var(--ac);
+        .timer-controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
         }
 
         /* Buttons */
         .btn {
-            width: 100%; padding: 15px; border-radius: 15px; border: none;
-            font-family: 'Syne'; font-weight: 800; cursor: pointer; transition: 0.2s;
-            margin-top: 10px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .btn-ac { background: var(--ac); color: #fff; }
-        .btn-gr { background: var(--gr); color: #fff; }
-        .btn-sf { background: var(--sf2); color: var(--tx); }
-        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: white; width: 100%; margin-top: 12px; }
+        .btn-secondary { background: var(--surface); border: 1px solid var(--border); color: var(--text-main); }
+        .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); font-size: 0.8rem; padding: 8px 16px; }
+        .btn:active { transform: scale(0.98); opacity: 0.9; }
 
+        /* Audio Controls */
+        .audio-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 24px;
+        }
+        .audio-btn {
+            padding: 10px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .audio-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+
+        /* Topics List */
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .topic-item:last-child { border-bottom: none; }
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .checkbox.checked { background: var(--success); border-color: var(--success); }
+        .checkbox.checked::after { content: '✓'; color: white; font-size: 12px; }
+        .topic-text { flex: 1; font-size: 0.95rem; }
+        .topic-text.done { color: var(--text-muted); text-decoration: line-through; }
+
+        /* Navigation Bar */
+        nav {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: rgba(10, 10, 12, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 10px 30px;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-item span { font-size: 0.65rem; font-weight: 500; }
+        .nav-icon { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; fill: none; }
+
+        /* Agenda / Program */
+        .agenda-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .time-tag { font-size: 0.8rem; color: var(--primary); font-weight: 600; width: 45px; }
+        .task-card { flex: 1; background: var(--surface); border-radius: 12px; padding: 12px; border-left: 3px solid var(--primary); }
+
+        /* Inputs */
         input {
-            width: 100%; background: var(--sf2); border: 1px solid var(--bd);
-            padding: 15px; border-radius: 12px; color: #fff; font-family: 'Syne'; margin-bottom: 10px;
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 14px;
+            border-radius: 12px;
+            color: white;
+            font-family: inherit;
+            margin-bottom: 12px;
+            outline: none;
         }
+        input:focus { border-color: var(--primary); }
 
-        /* Progress Dots */
-        .streak-wrap { display: flex; gap: 5px; margin-top: 5px; }
-        .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bd); }
-        .dot.active { background: var(--or); box-shadow: 0 0 5px var(--or); }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo-wrap">
-        <div class="tomato-logo"></div>
-        <div class="h-text">
-            <h1>YKS PANELİ</h1>
-            <p id="yks-timer-text">Yükleniyor...</p>
+<div class="app-container">
+    <header>
+        <div class="h-left">
+            <h1 id="welcome-text">Odaklan, Efe</h1>
+            <p id="current-date">-- -- ----</p>
         </div>
-    </div>
-    <div style="text-align: right">
-        <span style="font-size: 1.2rem;">🔥</span>
-        <b id="streak-val" style="font-family: 'JetBrains Mono';">0</b>
-    </div>
-</header>
+        <div class="yks-badge">
+            <b id="days-count">000</b>
+            <span>Gün Kaldı</span>
+        </div>
+    </header>
 
-<div class="top-stats">
-    <div class="stat-pill">🚀 <b>V6</b> <span>Sürüm</span></div>
-    <div class="stat-pill">🍅 <b id="stat-pomo">0</b> <span>Seans</span></div>
-    <div class="stat-pill">⏱️ <b id="stat-mola">0</b> <span>Dk Mola</span></div>
-    <div class="stat-pill">📈 <b id="stat-prog">%0</b> <span>Başarı</span></div>
+    <main>
+        <!-- DASHBOARD -->
+        <section id="dash" class="page active">
+            <div class="card">
+                <span class="card-label">Haftalık Analiz</span>
+                <canvas id="pomoChart" height="180"></canvas>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="card">
+                    <span class="card-label">Tamamlanan</span>
+                    <h2 id="total-pomo" style="font-size: 1.8rem;">0</h2>
+                    <p style="font-size: 0.7rem; color: var(--text-muted)">Seans</p>
+                </div>
+                <div class="card">
+                    <span class="card-label">İlerleme</span>
+                    <h2 id="overall-prog" style="font-size: 1.8rem;">%0</h2>
+                    <p style="font-size: 0.7rem; color: var(--text-muted)">Müfredat</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- POMODORO -->
+        <section id="pomo" class="page">
+            <div class="card timer-box">
+                <span class="card-label" id="timer-type">Çalışma Zamanı</span>
+                <div class="time-display" id="time-val">25:00</div>
+                
+                <div class="timer-controls">
+                    <button class="btn btn-ghost" onclick="setTimer(25)">25dk</button>
+                    <button class="btn btn-ghost" onclick="setTimer(50)">50dk</button>
+                    <button class="btn btn-ghost" onclick="setTimer(5, true)">5dk Mola</button>
+                </div>
+
+                <button class="btn btn-primary" id="start-btn" onclick="toggleTimer()">BAŞLAT</button>
+                
+                <div class="audio-grid">
+                    <button class="audio-btn" onclick="toggleAudio('rain', this)">Yağmur</button>
+                    <button class="audio-btn" onclick="toggleAudio('lofi', this)">Lo-fi</button>
+                    <button class="audio-btn" onclick="toggleAudio('forest', this)">Orman</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- KONULAR -->
+        <section id="topi" class="page">
+            <div class="card">
+                <span class="card-label">TYT Matematik</span>
+                <div id="topic-list">
+                    <!-- Topics via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- PROGRAM -->
+        <section id="prog" class="page">
+            <div class="card">
+                <span class="card-label">Günlük Plan</span>
+                <div id="agenda-container">
+                    <!-- Agenda via JS -->
+                </div>
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="addEntry()">+ Yeni Görev</button>
+            </div>
+        </section>
+
+        <!-- RAPOR -->
+        <section id="tgrm" class="page">
+            <div class="card">
+                <span class="card-label">Raporlama Servisi</span>
+                <input type="text" id="tg-token" placeholder="Telegram Bot Token">
+                <input type="text" id="tg-id" placeholder="Chat ID">
+                <button class="btn btn-secondary" style="width: 100%" onclick="saveConfig()">Ayarları Kaydet</button>
+                <button class="btn btn-primary" onclick="sendReport()">Raporu Gönder</button>
+            </div>
+        </section>
+    </main>
+
+    <nav>
+        <div class="nav-item active" onclick="nav('dash')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            <span>Özet</span>
+        </div>
+        <div class="nav-item" onclick="nav('pomo')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>Odak</span>
+        </div>
+        <div class="nav-item" onclick="nav('topi')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            <span>Konu</span>
+        </div>
+        <div class="nav-item" onclick="nav('prog')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span>Plan</span>
+        </div>
+        <div class="nav-item" onclick="nav('tgrm')">
+            <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <span>Rapor</span>
+        </div>
+    </nav>
 </div>
 
-<main id="app-main">
-    <!-- ANA SAYFA -->
-    <section id="dash" class="page active">
-        <div class="card" style="background: linear-gradient(135deg, #4f7cff22, transparent);">
-            <span class="card-label">Günün Sözü</span>
-            <p id="quote" style="font-weight: 700; font-size: 1.1rem;">"Efe, bugün dünden daha iyi olmaya hazır mısın?"</p>
-        </div>
-        
-        <div class="card">
-            <span class="card-label">Haftalık Aktivite</span>
-            <canvas id="pomoChart" height="150"></canvas>
-        </div>
-        
-        <div class="card" id="last-exam-view">
-            <span class="card-label">Son Deneme Netin</span>
-            <div style="font-size: 1.5rem; font-weight: 800; color: var(--ac);">-- / --</div>
-        </div>
-    </section>
-
-    <!-- POMODORO -->
-    <section id="pomo" class="page">
-        <div class="card timer-container">
-            <div class="timer-circle">
-                <svg class="timer-svg">
-                    <circle class="timer-bg" cx="120" cy="120" r="110"></circle>
-                    <circle id="timer-bar" class="timer-bar" cx="120" cy="120" r="110"></circle>
-                </svg>
-                <div class="timer-display" id="time-val">25:00</div>
-            </div>
-
-            <div class="music-player">
-                <button class="music-btn" id="m-lofi" onclick="toggleMusic('lofi')">🎹</button>
-                <button class="music-btn" id="m-rain" onclick="toggleMusic('rain')">🌧️</button>
-                <button class="music-btn" id="m-none" onclick="toggleMusic('none')">🔇</button>
-            </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 25px;">
-                <button class="btn btn-sf" onclick="setTime(25)">25</button>
-                <button class="btn btn-sf" onclick="setTime(50)">50</button>
-                <button class="btn btn-sf" style="color:var(--gr)" onclick="setTime(5, true)">MOLA</button>
-            </div>
-            
-            <button id="pomo-main-btn" class="btn btn-ac" onclick="toggleTimer()">ODAKLANMAYI BAŞLAT</button>
-        </div>
-    </section>
-
-    <!-- KONULAR -->
-    <section id="topi" class="page">
-        <div id="topic-list"></div>
-    </section>
-
-    <!-- PROGRAM -->
-    <section id="prog" class="page">
-        <div class="card">
-            <span class="card-label">Günlük Ajandam</span>
-            <div id="agenda-list"></div>
-            <button class="btn btn-sf" onclick="addAgendaItem()">+ YENİ GÖREV EKLE</button>
-        </div>
-    </section>
-
-    <!-- RAPOR -->
-    <section id="tgrm" class="page">
-        <div class="card">
-            <span class="card-label">Telegram Ayarları</span>
-            <input type="text" id="tg-token" placeholder="Bot Token">
-            <input type="text" id="tg-cid" placeholder="Chat ID">
-            <button class="btn btn-sf" onclick="saveTg()">AYARLARI KAYDET</button>
-        </div>
-        <button class="btn btn-ac" onclick="sendAdvancedReport()">DETAYLI ANALİZ RAPORU GÖNDER</button>
-    </section>
-</main>
-
-<nav>
-    <div class="nav-item active" onclick="showPage('dash')">
-        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        <span>Ana</span>
-    </div>
-    <div class="nav-item" onclick="showPage('pomo')">
-        <svg viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-        <span>Pomo</span>
-    </div>
-    <div class="nav-item" onclick="showPage('topi')">
-        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
-        <span>Konu</span>
-    </div>
-    <div class="nav-item" onclick="showPage('prog')">
-        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
-        <span>Liste</span>
-    </div>
-    <div class="nav-item" onclick="showPage('tgrm')">
-        <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-        <span>Rapor</span>
-    </div>
-</nav>
-
-<!-- Audio Elements (Hatasız Çalma İçin Dahili) -->
-<audio id="snd-lofi" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
-<audio id="snd-rain" loop src="https://assets.mixkit.co/active_storage/sfx/2357/2357-preview.mp3"></audio>
+<!-- REAL AMBIENT SOUNDS -->
+<audio id="snd-rain" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"></audio> <!-- Replace with actual Rain URL -->
+<audio id="snd-lofi" loop src="https://luan.xyz/files/audio/ambient_c_base.mp3"></audio>
+<audio id="snd-forest" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
 
 <script>
-    // --- DATABASE & DEĞERLER ---
-    const YKS_TARGET = new Date("June 20, 2026 10:00:00").getTime();
-    const SUBJECTS = [
-        {id: 1, cat: "Matematik", name: "Temel Kavramlar", p: "TYT"},
-        {id: 2, cat: "Matematik", name: "Problemler", p: "TYT"},
-        {id: 3, cat: "Matematik", name: "Logaritma", p: "AYT"},
-        {id: 4, cat: "Fizik", name: "Optik", p: "TYT"},
-        {id: 5, cat: "Türkçe", name: "Paragraf Teknikleri", p: "TYT"}
-    ];
-
-    let db = JSON.parse(localStorage.getItem('yks_v6')) || {
-        pomo: 0, mola: 0, streak: 0, 
-        lastDate: "", 
+    // --- DATA ---
+    const YKS_DATE = new Date("June 20, 2026 10:00:00").getTime();
+    const TOPICS_DB = ["Temel Kavramlar", "Sayı Basamakları", "Problemler", "Mantık", "Fonksiyonlar", "Trigonometri", "Limit ve Süreklilik"];
+    
+    let db = JSON.parse(localStorage.getItem('yks_v7')) || {
+        pomo: 0, 
         doneTopics: [], 
-        agenda: [{time: "09:00", task: "Paragraf Çözümü"}, {time: "11:00", task: "Matematik Kampı"}],
-        exams: [], 
-        tg: {token: "", cid: ""},
-        history: {}
+        agenda: [{t:"08:00", d:"Paragraf Rutini"}, {t:"10:00", d:"Alan Denemesi"}],
+        history: {},
+        tg: {token: "", id: ""}
     };
 
-    // --- SİSTEM BAŞLATICI ---
+    // --- INIT ---
     window.onload = () => {
-        initApp();
+        updateDate();
         renderTopics();
         renderAgenda();
-        updateYksCounter();
         updateStats();
         initChart();
-        checkStreak();
-        setInterval(updateYksCounter, 60000);
+        setInterval(updateDate, 60000);
     };
 
-    function initApp() {
-        document.getElementById('tg-token').value = db.tg.token;
-        document.getElementById('tg-cid').value = db.tg.cid;
-        document.getElementById('streak-val').innerText = db.streak;
+    function updateDate() {
+        const now = new Date();
+        document.getElementById('current-date').innerText = now.toLocaleDateString('tr-TR', {day:'numeric', month:'long', year:'numeric'});
+        const diff = YKS_DATE - now.getTime();
+        document.getElementById('days-count').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
     }
 
-    function save() {
-        localStorage.setItem('yks_v6', JSON.stringify(db));
-        updateStats();
-    }
+    function save() { localStorage.setItem('yks_v7', JSON.stringify(db)); updateStats(); }
 
-    // --- NAVIGATION ---
-    function showPage(id) {
+    // --- NAV ---
+    function nav(id) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         event.currentTarget.classList.add('active');
     }
 
-    // --- POMODORO SİSTEMİ V6 ---
-    let timerInt;
-    let timeRem = 1500;
+    // --- POMODORO ---
+    let timer;
+    let time = 1500;
     let isRunning = false;
-    let currentAudio = null;
+    let activeSnd = null;
 
-    function setTime(m, isMola = false) {
-        clearInterval(timerInt);
+    function setTimer(m, isMola = false) {
+        clearInterval(timer);
         isRunning = false;
-        timeRem = m * 60;
-        document.getElementById('pomo-main-btn').innerText = isMola ? "MOLAYI BAŞLAT" : "ODAKLANMAYI BAŞLAT";
-        document.getElementById('time-val').innerText = `${m}:00`;
-        updateCircle(100);
+        time = m * 60;
+        document.getElementById('timer-type').innerText = isMola ? "Dinlenme" : "Çalışma Zamanı";
+        updateDisplay();
+        document.getElementById('start-btn').innerText = "BAŞLAT";
     }
 
     function toggleTimer() {
         if(isRunning) {
-            clearInterval(timerInt);
-            document.getElementById('pomo-main-btn').innerText = "DEVAM ET";
+            clearInterval(timer);
+            document.getElementById('start-btn').innerText = "DEVAM ET";
         } else {
-            timerInt = setInterval(() => {
-                timeRem--;
-                const m = Math.floor(timeRem / 60);
-                const s = timeRem % 60;
-                document.getElementById('time-val').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-                updateCircle((timeRem / 1500) * 100);
-                if(timeRem <= 0) {
-                    clearInterval(timerInt);
-                    pomoFinish();
+            timer = setInterval(() => {
+                time--;
+                updateDisplay();
+                if(time <= 0) {
+                    clearInterval(timer);
+                    db.pomo++;
+                    const key = new Date().toISOString().split('T')[0];
+                    db.history[key] = (db.history[key] || 0) + 1;
+                    save();
+                    alert("Seans bitti, Efe.");
+                    setTimer(25);
                 }
             }, 1000);
-            document.getElementById('pomo-main-btn').innerText = "DURAKLAT";
+            document.getElementById('start-btn').innerText = "DURAKLAT";
         }
         isRunning = !isRunning;
     }
 
-    function updateCircle(pct) {
-        const offset = 691 - (691 * (pct / 100));
-        document.getElementById('timer-bar').style.strokeDashoffset = offset;
+    function updateDisplay() {
+        const m = Math.floor(time / 60);
+        const s = time % 60;
+        document.getElementById('time-val').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
     }
 
-    function pomoFinish() {
-        db.pomo++;
-        const today = new Date().toISOString().split('T')[0];
-        db.history[today] = (db.history[today] || 0) + 1;
-        save();
-        alert("Efe, bir seans daha bitti! Başarıya bir adım daha yaklaştın.");
-        setTime(25);
-    }
-
-    // --- MUSIC PLAYER ---
-    function toggleMusic(type) {
-        if(currentAudio) {
-            currentAudio.pause();
-            document.querySelectorAll('.music-btn').forEach(b => b.classList.remove('playing'));
+    function toggleAudio(type, el) {
+        if(activeSnd) {
+            activeSnd.pause();
+            document.querySelectorAll('.audio-btn').forEach(b => b.classList.remove('active'));
         }
-        if(type === 'none') return;
-        
-        currentAudio = document.getElementById('snd-' + type);
-        currentAudio.play();
-        document.getElementById('m-' + type).classList.add('playing');
+        const s = document.getElementById('snd-' + type);
+        if(activeSnd === s) {
+            activeSnd = null;
+        } else {
+            s.play();
+            activeSnd = s;
+            el.classList.add('active');
+        }
     }
 
     // --- TOPICS ---
     function renderTopics() {
         const cont = document.getElementById('topic-list');
         cont.innerHTML = "";
-        SUBJECTS.forEach(s => {
-            const isDone = db.doneTopics.includes(s.id);
-            cont.innerHTML += `
-                <div class="topic-card ${isDone ? 'done' : ''}" onclick="toggleTopic(${s.id})">
-                    <div class="topic-info">
-                        <h4>${s.name}</h4>
-                        <p>${s.cat} • ${s.p}</p>
-                    </div>
-                    <div class="check-btn">${isDone ? '✓' : ''}</div>
-                </div>
+        TOPICS_DB.forEach(t => {
+            const isDone = db.doneTopics.includes(t);
+            const item = document.createElement('div');
+            item.className = 'topic-item';
+            item.innerHTML = `
+                <div class="checkbox ${isDone ? 'checked' : ''}" onclick="toggleTopic('${t}')"></div>
+                <div class="topic-text ${isDone ? 'done' : ''}">${t}</div>
             `;
+            cont.appendChild(item);
         });
     }
 
-    function toggleTopic(id) {
-        if(db.doneTopics.includes(id)) db.doneTopics = db.doneTopics.filter(x => x !== id);
-        else db.doneTopics.push(id);
-        save();
-        renderTopics();
+    function toggleTopic(t) {
+        if(db.doneTopics.includes(t)) db.doneTopics = db.doneTopics.filter(x => x !== t);
+        else db.doneTopics.push(t);
+        save(); renderTopics();
     }
 
-    // --- AGENDA (PROGRAM) ---
+    // --- AGENDA ---
     function renderAgenda() {
-        const cont = document.getElementById('agenda-list');
+        const cont = document.getElementById('agenda-container');
         cont.innerHTML = "";
-        db.agenda.forEach((a, idx) => {
+        db.agenda.forEach(a => {
             cont.innerHTML += `
-                <div class="agenda-item">
-                    <div class="agenda-time">${a.time}</div>
-                    <div class="agenda-content">
-                        <b>${a.task}</b>
-                    </div>
+                <div class="agenda-row">
+                    <div class="time-tag">${a.t}</div>
+                    <div class="task-card">${a.d}</div>
                 </div>
             `;
         });
     }
 
-    function addAgendaItem() {
-        const task = prompt("Görev nedir?");
-        const time = prompt("Saat kaçta? (Örn: 14:30)");
-        if(task && time) {
-            db.agenda.push({time, task});
-            save();
-            renderAgenda();
-        }
+    function addEntry() {
+        const d = prompt("Görev?");
+        const t = prompt("Saat? (00:00)");
+        if(d && t) { db.agenda.push({t, d}); save(); renderAgenda(); }
     }
 
-    // --- UTILS ---
-    function updateYksCounter() {
-        const diff = YKS_TARGET - new Date().getTime();
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        document.getElementById('yks-timer-text').innerText = `${days} GÜN KALDI`;
-    }
-
+    // --- STATS ---
     function updateStats() {
-        document.getElementById('stat-pomo').innerText = db.pomo;
-        document.getElementById('stat-mola').innerText = db.mola;
-        const prog = Math.round((db.doneTopics.length / SUBJECTS.length) * 100);
-        document.getElementById('stat-prog').innerText = `%${prog}`;
-    }
-
-    function checkStreak() {
-        const today = new Date().toLocaleDateString();
-        if(db.lastDate !== today) {
-            db.streak++;
-            db.lastDate = today;
-            save();
-        }
-    }
-
-    // --- TELEGRAM ADVANCED ---
-    function saveTg() {
-        db.tg.token = document.getElementById('tg-token').value;
-        db.tg.cid = document.getElementById('tg-cid').value;
-        save();
-        alert("Telegram bağlantısı kuruldu!");
-    }
-
-    async function sendAdvancedReport() {
-        const prog = Math.round((db.doneTopics.length / SUBJECTS.length) * 100);
-        const text = `
-🔥 *Efe YKS 2026 İlerleme Raporu*
---------------------------------
-📅 *Tarih:* ${new Date().toLocaleDateString()}
-🍅 *Tamamlanan Pomodoro:* ${db.pomo} Seans
-⚡ *Günlük Seri (Streak):* ${db.streak} Gün
-📊 *Müfredat Tamamlama:* %${prog}
-
-✅ *Son Bitirilen Konular:*
-${db.doneTopics.slice(-3).map(id => "- " + SUBJECTS.find(s=>s.id==id).name).join('\n')}
-
-🎯 *Efe'ye Not:* "Hedefin olan üniversite için bugün %${Math.random() > 0.5 ? '1 daha iyisin' : '0.5 daha yaklaştın'}. Sakın durma!"
-        `;
-        const url = `https://api.telegram.org/bot${db.tg.token}/sendMessage?chat_id=${db.tg.cid}&text=${encodeURIComponent(text)}&parse_mode=Markdown`;
-        await fetch(url);
-        alert("Detaylı rapor Telegram'a uçuruldu!");
+        document.getElementById('total-pomo').innerText = db.pomo;
+        const prog = Math.round((db.doneTopics.length / TOPICS_DB.length) * 100);
+        document.getElementById('overall-prog').innerText = `%${prog}`;
     }
 
     function initChart() {
         const ctx = document.getElementById('pomoChart').getContext('2d');
         new Chart(ctx, {
-            type: 'line',
+            type: 'bar',
             data: {
-                labels: Object.keys(db.history).slice(-5),
+                labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum'],
                 datasets: [{
-                    label: 'Pomo',
-                    data: Object.values(db.history).slice(-5),
-                    borderColor: '#4f7cff',
-                    tension: 0.4,
-                    fill: true,
-                    backgroundColor: 'rgba(79, 124, 255, 0.1)'
+                    data: [2, 5, 3, 6, 4], // Placeholder
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 6
                 }]
             },
-            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
+            options: { 
+                responsive: true, 
+                plugins: { legend: { display: false } },
+                scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#a1a1aa' } } }
+            }
         });
+    }
+
+    // --- TELEGRAM ---
+    function saveConfig() {
+        db.tg.token = document.getElementById('tg-token').value;
+        db.tg.id = document.getElementById('tg-id').value;
+        save(); alert("Kaydedildi.");
+    }
+
+    async function sendReport() {
+        const text = `📊 YKS Özet Raporu (Efe)\n------------------\nSeans: ${db.pomo}\nİlerleme: %${Math.round((db.doneTopics.length / TOPICS_DB.length) * 100)}`;
+        await fetch(`https://api.telegram.org/bot${db.tg.token}/sendMessage?chat_id=${db.tg.id}&text=${encodeURIComponent(text)}`);
+        alert("Gönderildi.");
     }
 </script>
 </body>
