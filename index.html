@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 <title>YKS — Efe</title>
 <meta name="theme-color" content="#07080f"/>
 <meta name="mobile-web-app-capable" content="yes"/>
@@ -12,305 +12,277 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-:root{
-  --bg:#07080f;--surface:#0e0f1c;--surface2:#161728;--border:#1e2035;
-  --accent:#4f7cff;--green:#2ecc8f;--orange:#ff8c42;--red:#ff4f6b;--purple:#a259ff;
-  --text:#e8e9f5;--text2:#6b6d8a;
-  --fd:'Syne',sans-serif;--fm:'JetBrains Mono',monospace;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{height:100%;height:-webkit-fill-available}body{height:100%;height:-webkit-fill-available;overflow:hidden}
-body{background:var(--bg);color:var(--text);font-family:var(--fd);display:flex;flex-direction:column}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,124,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,124,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-
-/* HEADER */
-.header{flex-shrink:0;padding:16px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(7,8,15,.95);backdrop-filter:blur(12px);position:relative;z-index:100}
-.header h1{font-size:20px;font-weight:800;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.header p{font-size:10px;color:var(--text2);font-family:var(--fm);margin-top:1px}
-.countdown{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:6px 12px;text-align:center}
-.countdown .d{font-size:20px;font-weight:800;color:var(--orange);font-family:var(--fm)}
-.countdown .l{font-size:8px;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
-
-/* TABS */
-.tabs{flex-shrink:0;display:flex;gap:4px;padding:8px 12px;overflow-x:auto;scrollbar-width:none;background:rgba(7,8,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:relative;z-index:99}
+:root{--bg:#07080f;--sf:#0e0f1c;--sf2:#161728;--bd:#1e2035;--ac:#4f7cff;--gr:#2ecc8f;--or:#ff8c42;--rd:#ff4f6b;--pu:#a259ff;--tx:#e8e9f5;--t2:#6b6d8a;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'Syne',sans-serif;overflow:hidden;display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,124,255,.03)1px,transparent 1px),linear-gradient(90deg,rgba(79,124,255,.03)1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.hdr{flex-shrink:0;padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);background:rgba(7,8,15,.97);z-index:100;position:relative}
+.hdr h1{font-size:19px;font-weight:800;background:linear-gradient(135deg,#fff,var(--ac));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr p{font-size:10px;color:var(--t2);font-family:'JetBrains Mono',monospace;margin-top:1px}
+.cdbox{background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:6px 12px;text-align:center;min-width:64px}
+.cdbox .cdn{font-size:20px;font-weight:800;color:var(--or);font-family:'JetBrains Mono',monospace;line-height:1.2}
+.cdbox .cdl{font-size:8px;color:var(--t2);text-transform:uppercase;letter-spacing:1px}
+.tabs{flex-shrink:0;display:flex;gap:3px;padding:7px 10px;overflow-x:auto;scrollbar-width:none;background:rgba(7,8,15,.97);border-bottom:1px solid var(--bd);z-index:99;position:relative}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex-shrink:0;padding:6px 12px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--text2);font-family:var(--fd);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
-.tab:hover{color:var(--text);background:var(--surface2)}
-.tab.active{background:var(--accent);color:#fff}
-
-/* SCROLL AREA */
-.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative;z-index:1;padding-bottom:16px}
-.scroll-area::-webkit-scrollbar{display:none}
-.scroll-area{scrollbar-width:none}
-
-/* SECTIONS */
-.sec{display:none;padding:12px}
-.sec.active{display:block;animation:fadeUp .25s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* CARDS */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
-.card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text2);margin-bottom:12px}
-
-/* STATS */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
-.stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
-.stat-box .si{font-size:18px;margin-bottom:2px}
-.stat-box .sv{font-size:20px;font-weight:800;font-family:var(--fm)}
-.stat-box .sl{font-size:9px;color:var(--text2);margin-top:1px}
-
-/* PROGRESS */
-.prog-wrap{margin-bottom:8px}
-.prog-header{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px}
-.prog-bar{height:7px;background:var(--surface2);border-radius:99px;overflow:hidden}
-.prog-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
-
-/* MOTIVATION */
-.mot-card{background:linear-gradient(135deg,rgba(79,124,255,.12),rgba(162,89,255,.08));border:1px solid rgba(79,124,255,.25);border-radius:14px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden;cursor:pointer}
-.mot-card::before{content:'"';position:absolute;top:-8px;left:8px;font-size:64px;color:rgba(79,124,255,.12);font-family:Georgia,serif;line-height:1}
-.mot-text{font-size:14px;font-weight:600;line-height:1.6;position:relative}
-.mot-author{font-size:11px;color:var(--text2);margin-top:6px;font-style:italic}
-
-/* BUTTONS */
-.btn{padding:11px 18px;border-radius:11px;border:none;font-family:var(--fd);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;-webkit-tap-highlight-color:transparent}
-.btn:active{transform:scale(.96)}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-success{background:var(--green);color:#fff}
-.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
-.btn-full{width:100%;margin-top:8px}
-.btn-tg{background:linear-gradient(135deg,#229ED9,#1a7fc1);color:#fff}
-.btn-danger{background:var(--red);color:#fff}
-
-/* TIMER */
-.timer-wrap{display:flex;justify-content:center;margin:6px 0 14px}
-.timer-wrap svg{filter:drop-shadow(0 0 14px rgba(79,124,255,.25))}
-.timer-ctrl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.timer-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
-
-/* TOPICS */
-.subj-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;cursor:pointer;margin-bottom:5px;transition:border-color .2s;-webkit-tap-highlight-color:transparent}
-.subj-hdr:hover{border-color:var(--accent)}
-.subj-hdr .sn{font-size:13px;font-weight:700}
-.subj-hdr .sp{font-family:var(--fm);font-size:11px;color:var(--accent)}
-.subj-topics{display:none;padding:2px 0 8px 6px}
-.subj-topics.open{display:block}
-.topic-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;transition:background .15s;font-size:12px;-webkit-tap-highlight-color:transparent}
-.topic-row:hover,.topic-row:active{background:var(--surface2)}
-.topic-cb{width:16px;height:16px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:10px}
-.topic-row.done .topic-cb{background:var(--green);border-color:var(--green);color:#fff}
-.topic-row.done .topic-nm{color:var(--text2);text-decoration:line-through}
-
-/* DENEME */
-.inp-grp{margin-bottom:8px}
-.inp-grp label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px}
-.inp-grp input,.inp-grp select{width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--fd);font-size:13px;outline:none;transition:border-color .2s}
-.inp-grp input:focus{border-color:var(--accent)}
-.exam-item{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.exam-item .escore{font-family:var(--fm);font-size:16px;font-weight:700;color:var(--accent)}
-
-/* CHART */
-.chart-wrap{position:relative;height:160px}
-
-/* TELEGRAM */
-.tg-inp{width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--fm);font-size:12px;outline:none;margin-bottom:8px;transition:border-color .2s}
-.tg-inp:focus{border-color:#229ED9}
-.tg-status{padding:9px 12px;border-radius:9px;font-size:12px;font-weight:600;text-align:center;display:none;margin-top:8px}
-.tg-status.ok{background:rgba(46,204,143,.15);color:var(--green);display:block}
-.tg-status.err{background:rgba(255,79,107,.15);color:var(--red);display:block}
-
-/* WEEKLY SCHEDULE */
-.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
-.day-col{min-height:320px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:6px 4px;display:flex;flex-direction:column;gap:4px;transition:border-color .2s}
-.day-col.drag-over{border-color:var(--accent);background:rgba(79,124,255,.08)}
-.day-label{font-size:9px;font-weight:700;text-align:center;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;flex-shrink:0}
-.week-block{border-radius:7px;padding:5px 4px;font-size:9px;font-weight:700;text-align:center;cursor:grab;user-select:none;transition:all .2s;-webkit-tap-highlight-color:transparent;line-height:1.3}
-.week-block:active{cursor:grabbing;transform:scale(.95);opacity:.8}
-.week-block.dragging{opacity:.4;transform:scale(.9)}
-
-/* RESOURCES */
-.res-card{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:12px;margin-bottom:8px}
-.res-card .rc-title{font-size:13px;font-weight:700;margin-bottom:6px}
-.res-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
-.res-item:last-child{border-bottom:none}
-.res-item .yt{background:#ff0000;color:#fff;border-radius:4px;padding:2px 5px;font-size:9px;font-weight:700;flex-shrink:0}
-.res-item .kamp{background:var(--purple);color:#fff;border-radius:4px;padding:2px 5px;font-size:9px;font-weight:700;flex-shrink:0}
-.res-link{color:var(--accent);text-decoration:none;font-size:11px}
-
-/* SAVE INDICATOR */
-.save-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-left:6px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.tab{flex-shrink:0;padding:6px 11px;border-radius:8px;border:none;background:transparent;color:var(--t2);font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab.on{background:var(--ac);color:#fff}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative;z-index:1;padding-bottom:16px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.sec{display:none;padding:12px;animation:fu .25s ease}
+.sec.on{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:10px}
+.ctitle{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--t2);margin-bottom:12px}
+.srow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.sbox{background:var(--sf2);border:1px solid var(--bd);border-radius:12px;padding:11px 8px;text-align:center}
+.sbox .si{font-size:18px;margin-bottom:2px}
+.sbox .sv{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.sbox .sl{font-size:9px;color:var(--t2);margin-top:1px}
+.pb{height:7px;background:var(--sf2);border-radius:99px;overflow:hidden;margin-top:5px}
+.pbf{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.ph{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}
+.mot{background:linear-gradient(135deg,rgba(79,124,255,.12),rgba(162,89,255,.08));border:1px solid rgba(79,124,255,.25);border-radius:14px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden;cursor:pointer}
+.mot::before{content:'"';position:absolute;top:-8px;left:8px;font-size:60px;color:rgba(79,124,255,.12);font-family:Georgia,serif;line-height:1}
+.mot-t{font-size:13px;font-weight:600;line-height:1.6;position:relative}
+.mot-a{font-size:10px;color:var(--t2);margin-top:6px;font-style:italic}
+.btn{padding:11px 16px;border-radius:11px;border:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;width:100%}
+.btn:active{transform:scale(.97)}
+.btn-ac{background:var(--ac);color:#fff}.btn-gr{background:var(--gr);color:#fff}.btn-or{background:var(--or);color:#fff}
+.btn-gh{background:var(--sf2);color:var(--tx);border:1px solid var(--bd)}.btn-tg{background:linear-gradient(135deg,#229ED9,#1a7fc1);color:#fff}.btn-rd{background:var(--rd);color:#fff}
+.tring{display:flex;justify-content:center;margin:8px 0 16px}
+.tctrl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tq{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.sh{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;cursor:pointer;margin-bottom:5px;transition:border-color .2s}
+.sh.open{border-color:var(--ac)}.sh .sn{font-size:12px;font-weight:700}.sh .sp{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ac)}
+.stl{display:none;padding:2px 0 8px 4px}.stl.open{display:block}
+.tr{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:12px}
+.tr:active{background:var(--sf2)}
+.tcb{width:16px;height:16px;border-radius:4px;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;transition:all .2s}
+.tr.dn .tcb{background:var(--gr);border-color:var(--gr);color:#fff}.tr.dn .tn{color:var(--t2);text-decoration:line-through}
+.wgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px}
+.dcol{min-height:280px;background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:5px 3px;display:flex;flex-direction:column;gap:3px;transition:border-color .2s}
+.dcol.dov{border-color:var(--ac);background:rgba(79,124,255,.06)}
+.dlbl{font-size:8px;font-weight:700;text-align:center;color:var(--t2);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;flex-shrink:0}
+.wblk{border-radius:6px;padding:4px 3px;font-size:8px;font-weight:700;text-align:center;cursor:grab;user-select:none;line-height:1.3}
+.wblk:active{opacity:.7}
+.ig{margin-bottom:8px}.ig label{font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px}
+.ig input{width:100%;padding:9px 11px;background:var(--sf2);border:1px solid var(--bd);border-radius:9px;color:var(--tx);font-family:'Syne',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.ig input:focus{border-color:var(--ac)}
+.ei{background:var(--sf2);border:1px solid var(--bd);border-radius:11px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.rcard{background:var(--sf2);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:8px}
+.rcard .rct{font-size:13px;font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+.ri{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(30,32,53,.5)}
+.ri:last-child{border-bottom:none;padding-bottom:0}
+.ri .rb{flex-shrink:0;padding:3px 7px;border-radius:5px;font-size:9px;font-weight:800;letter-spacing:.5px}
+.ri .ryt{background:rgba(255,0,0,.2);color:#ff5555;border:1px solid rgba(255,0,0,.3)}
+.ri .rkamp{background:rgba(162,89,255,.2);color:#a259ff;border:1px solid rgba(162,89,255,.3)}
+.ri .rn{font-size:12px;font-weight:700;margin-bottom:2px}.ri .rd{font-size:10px;color:var(--t2);margin-bottom:3px}
+.ri a{color:var(--ac);font-size:10px;text-decoration:none;font-weight:600}
+.chw{position:relative;height:160px}
+.tgi{width:100%;padding:9px 11px;background:var(--sf2);border:1px solid var(--bd);border-radius:9px;color:var(--tx);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none;margin-bottom:8px;transition:border-color .2s}
+.tgi:focus{border-color:#229ED9}
+.tgs{padding:9px 12px;border-radius:9px;font-size:12px;font-weight:600;text-align:center;display:none;margin-top:8px}
+.tgs.ok{background:rgba(46,204,143,.15);color:var(--gr);display:block}.tgs.err{background:rgba(255,79,107,.15);color:var(--rd);display:block}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--gr);display:inline-block;margin-left:5px;animation:pl 2s infinite}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
 </style>
 </head>
 <body>
-
-<div class="header">
+<div class="hdr">
   <div>
-    <h1>YKS Paneli <span class="save-dot" id="saveDot" title="Veriler kaydediliyor"></span></h1>
-    <p id="headerDate">Efe · yükleniyor...</p>
+    <h1>YKS Paneli <span class="sdot"></span></h1>
+    <p id="hDate">Efe · yukleniyor...</p>
   </div>
-  <div class="countdown">
-    <div class="d" id="cdDays">—</div>
-    <div class="l">gün kaldı</div>
-  </div>
+  <div class="cdbox"><div class="cdn" id="cdN">...</div><div class="cdl">gun kaldi</div></div>
 </div>
-
 <div class="tabs" id="tabBar">
-  <button class="tab active" data-tab="dashboard">🏠 Ana</button>
-  <button class="tab" data-tab="pomodoro">🍅 Pomodoro</button>
-  <button class="tab" data-tab="topics">📚 Konular</button>
-  <button class="tab" data-tab="weekly">📅 Program</button>
-  <button class="tab" data-tab="deneme">📝 Deneme</button>
-  <button class="tab" data-tab="resources">🎥 Kaynaklar</button>
-  <button class="tab" data-tab="stats">📊 Grafik</button>
-  <button class="tab" data-tab="telegram">📤 Rapor</button>
+  <button class="tab on" data-t="dash">Ana</button>
+  <button class="tab" data-t="pom">Pomodoro</button>
+  <button class="tab" data-t="top">Konular</button>
+  <button class="tab" data-t="week">Program</button>
+  <button class="tab" data-t="den">Deneme</button>
+  <button class="tab" data-t="res">Kaynaklar</button>
+  <button class="tab" data-t="stat">Grafik</button>
+  <button class="tab" data-t="tg">Rapor</button>
 </div>
-
-<div class="scroll-area">
-
-<!-- DASHBOARD -->
-<div class="sec active" id="sec-dashboard">
-  <div class="mot-card" onclick="nextMotivation()">
-    <div class="mot-text" id="motText">Yükleniyor...</div>
-    <div class="mot-author" id="motAuthor"></div>
+<div class="scroll">
+<div class="sec on" id="s-dash">
+  <div class="mot" onclick="nextMot()"><div class="mot-t" id="motT">-</div><div class="mot-a" id="motA"></div></div>
+  <div class="srow">
+    <div class="sbox"><div class="si">&#127813;</div><div class="sv" id="st1" style="color:var(--ac)">0</div><div class="sl">Pomodoro</div></div>
+    <div class="sbox"><div class="si">&#9749;</div><div class="sv" id="st2" style="color:var(--gr)">0</div><div class="sl">Mola dk</div></div>
+    <div class="sbox"><div class="si">&#128197;</div><div class="sv" id="st3" style="color:var(--or)">0</div><div class="sl">Bugun</div></div>
   </div>
-  <div class="stats-row">
-    <div class="stat-box"><div class="si">🍅</div><div class="sv" id="st1" style="color:var(--accent)">0</div><div class="sl">Pomodoro</div></div>
-    <div class="stat-box"><div class="si">☕</div><div class="sv" id="st2" style="color:var(--green)">0</div><div class="sl">Mola dk</div></div>
-    <div class="stat-box"><div class="si">📅</div><div class="sv" id="st3" style="color:var(--orange)">0</div><div class="sl">Bugün</div></div>
-  </div>
-  <div class="card">
-    <div class="card-title">Genel İlerleme</div>
-    <div class="prog-wrap">
-      <div class="prog-header"><span id="ov1">0/0 konu</span><span id="ov2" style="color:var(--accent);font-weight:700">%0</span></div>
-      <div class="prog-bar"><div class="prog-fill" id="ovBar" style="width:0%;background:var(--accent)"></div></div>
-    </div>
-  </div>
-  <div class="card"><div class="card-title">Dersler</div><div id="subjMini"></div></div>
-  <div class="card" id="lastExamCard" style="display:none">
-    <div class="card-title">Son Deneme</div>
-    <div id="lastExamInfo"></div>
-  </div>
+  <div class="card"><div class="ctitle">Genel Ilerleme</div><div class="ph"><span id="ov1">0/0 konu</span><span id="ov2" style="color:var(--ac);font-weight:700">%0</span></div><div class="pb"><div class="pbf" id="ovB" style="width:0%;background:var(--ac)"></div></div></div>
+  <div class="card"><div class="ctitle">Dersler</div><div id="subjM"></div></div>
+  <div class="card" id="lastE" style="display:none"><div class="ctitle">Son Deneme</div><div id="lastEI"></div></div>
 </div>
-
-<!-- POMODORO -->
-<div class="sec" id="sec-pomodoro">
+<div class="sec" id="s-pom">
   <div class="card" style="text-align:center">
-    <div style="margin-bottom:6px">
-      <span id="pomTag" style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;background:rgba(79,124,255,.2);color:var(--accent)">ÇALIŞMA</span>
-    </div>
-    <div class="timer-wrap">
-      <svg width="180" height="180" viewBox="0 0 200 200">
+    <div style="margin-bottom:6px"><span id="pomTag" style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;background:rgba(79,124,255,.18);color:var(--ac)">CALISMA</span></div>
+    <div class="tring">
+      <svg width="190" height="190" viewBox="0 0 200 200">
         <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="10"/>
-        <circle id="timerRing" cx="100" cy="100" r="88" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="553" stroke-dashoffset="0" transform="rotate(-90 100 100)" style="transition:stroke-dashoffset .5s linear"/>
-        <text x="100" y="96" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="36" font-weight="700" fill="#e8e9f5" id="timerTxt">25:00</text>
-        <text x="100" y="116" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="600" fill="#6b6d8a" id="timerSub">odaklan</text>
+        <circle id="tRing" cx="100" cy="100" r="88" fill="none" stroke="#4f7cff" stroke-width="10" stroke-linecap="round" stroke-dasharray="553" stroke-dashoffset="0" transform="rotate(-90 100 100)" style="transition:stroke-dashoffset .5s linear,stroke .3s"/>
+        <text x="100" y="95" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="36" font-weight="700" fill="#e8e9f5" id="tTxt">25:00</text>
+        <text x="100" y="115" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="600" fill="#6b6d8a" id="tSub">odaklan</text>
       </svg>
     </div>
-    <div class="timer-ctrl">
-      <button class="btn btn-success" id="btnStart" onclick="toggleTimer()">▶ Başlat</button>
-      <button class="btn btn-ghost" onclick="resetTimer()">⟳ Sıfırla</button>
+    <div class="tctrl">
+      <button class="btn btn-gr" id="btnS" onclick="toggleTimer()">Baslat</button>
+      <button class="btn btn-gh" onclick="resetTimer()">Sifirla</button>
     </div>
-    <div class="timer-quick">
-      <button class="btn btn-ghost" style="font-size:11px" onclick="setMode('work',25)">25 dk</button>
-      <button class="btn btn-ghost" style="font-size:11px" onclick="setMode('work',50)">50 dk</button>
-      <button class="btn btn-ghost" style="font-size:11px" onclick="setMode('break',5)">5 dk ☕</button>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-title">Bugünkü Seanslar</div>
-    <div id="sessionList" style="font-size:12px;color:var(--text2);line-height:2.2">Henüz seans yok.</div>
-  </div>
-</div>
-
-<!-- TOPICS -->
-<div class="sec" id="sec-topics">
-  <div class="card">
-    <div class="card-title">Toplam İlerleme</div>
-    <div class="prog-wrap">
-      <div class="prog-header"><span id="topOv1">0/0</span><span id="topOv2" style="color:var(--green);font-weight:700">%0</span></div>
-      <div class="prog-bar"><div class="prog-fill" id="topOvBar" style="width:0%;background:var(--green)"></div></div>
+    <div class="tq">
+      <button class="btn btn-gh" style="font-size:10px" onclick="setMode(false,25)">25 dk</button>
+      <button class="btn btn-gh" style="font-size:10px" onclick="setMode(false,50)">50 dk</button>
+      <button class="btn btn-gh" style="font-size:10px" onclick="setMode(true,5)">5 dk Mola</button>
     </div>
   </div>
-  <div id="topicsList"></div>
+  <div class="card"><div class="ctitle">Bugunku Seanslar</div><div id="sesList" style="font-size:12px;color:var(--t2);line-height:2.4">Henuz seans yok.</div></div>
 </div>
-
-<!-- WEEKLY PROGRAM -->
-<div class="sec" id="sec-weekly">
+<div class="sec" id="s-top">
+  <div class="card"><div class="ctitle">Toplam Ilerleme</div><div class="ph"><span id="tov1">0/0</span><span id="tov2" style="color:var(--gr);font-weight:700">%0</span></div><div class="pb"><div class="pbf" id="tovB" style="width:0%;background:var(--gr)"></div></div></div>
+  <div id="topList"></div>
+</div>
+<div class="sec" id="s-week">
   <div class="card">
-    <div class="card-title">Haftalık Program — Sürükle & Bırak</div>
-    <p style="font-size:11px;color:var(--text2);margin-bottom:10px">Ders bloklarını günlere sürükle. Dokunup basılı tut, sonra bırak.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px" id="blockPalette"></div>
-    <div class="week-grid" id="weekGrid"></div>
-    <button class="btn btn-ghost btn-full" onclick="clearWeekly()" style="margin-top:4px;font-size:12px">🗑 Programı Temizle</button>
+    <div class="ctitle">Haftalik Program</div>
+    <p style="font-size:10px;color:var(--t2);margin-bottom:10px">Blogu dokunup basili tut, gune surukle. Kaldirmak icin uzun bas.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px" id="wPal"></div>
+    <div class="wgrid" id="wGrid"></div>
+    <button class="btn btn-rd" style="margin-top:6px;font-size:11px" onclick="clearWeek()">Temizle</button>
   </div>
 </div>
-
-<!-- DENEME -->
-<div class="sec" id="sec-deneme">
+<div class="sec" id="s-den">
   <div class="card">
-    <div class="card-title">Yeni Deneme Ekle</div>
-    <div class="inp-grp"><label>Sınav Adı</label><input id="exName" type="text" placeholder="TYT Deneme #1"/></div>
+    <div class="ctitle">Yeni Deneme Ekle</div>
+    <div class="ig"><label>Sinav Adi</label><input id="exN" type="text" placeholder="TYT Deneme #1"/></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div class="inp-grp"><label>TYT Net</label><input id="exTyt" type="number" placeholder="0" min="0" max="120"/></div>
-      <div class="inp-grp"><label>AYT Net</label><input id="exAyt" type="number" placeholder="0" min="0" max="80"/></div>
+      <div class="ig"><label>TYT Net</label><input id="exT" type="number" placeholder="0" min="0"/></div>
+      <div class="ig"><label>AYT Net</label><input id="exA" type="number" placeholder="0" min="0"/></div>
     </div>
-    <div class="inp-grp"><label>Tarih</label><input id="exDate" type="date"/></div>
-    <div class="inp-grp"><label>Not</label><input id="exNote" type="text" placeholder="Opsiyonel..."/></div>
-    <button class="btn btn-primary btn-full" onclick="addExam()">✚ Ekle</button>
+    <div class="ig"><label>Tarih</label><input id="exD" type="date"/></div>
+    <div class="ig"><label>Not</label><input id="exNo" type="text" placeholder="Opsiyonel..."/></div>
+    <button class="btn btn-ac" style="margin-top:4px" onclick="addExam()">+ Ekle</button>
   </div>
   <div id="examList"></div>
 </div>
-
-<!-- RESOURCES -->
-<div class="sec" id="sec-resources">
-  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;padding:0 2px">YKS için önerilen YouTube kanalları ve kamplar 🎯</div>
-  <div id="resourcesList"></div>
+<div class="sec" id="s-res"><p style="font-size:11px;color:var(--t2);margin-bottom:10px">YKS icin onerilen YouTube kanallari ve kamplar</p><div id="resList"></div></div>
+<div class="sec" id="s-stat">
+  <div class="card"><div class="ctitle">Haftalik Pomodoro</div><div class="chw"><canvas id="wChart"></canvas></div></div>
+  <div class="card"><div class="ctitle">Deneme Netleri</div><div class="chw"><canvas id="eChart"></canvas></div></div>
+  <div class="card"><div class="ctitle">Ozet</div><div id="allSt" style="font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2.2;color:var(--t2)"></div></div>
 </div>
-
-<!-- STATS -->
-<div class="sec" id="sec-stats">
-  <div class="card"><div class="card-title">Haftalık Pomodoro</div><div class="chart-wrap"><canvas id="weeklyChart"></canvas></div></div>
-  <div class="card"><div class="card-title">Deneme Netleri</div><div class="chart-wrap"><canvas id="examChart"></canvas></div></div>
-  <div class="card"><div class="card-title">Özet</div><div id="allStats" style="font-family:var(--fm);font-size:12px;line-height:2.2;color:var(--text2)"></div></div>
-</div>
-
-<!-- TELEGRAM -->
-<div class="sec" id="sec-telegram">
+<div class="sec" id="s-tg">
   <div class="card">
-    <div class="card-title">Telegram Ayarları</div>
-    <label style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px">Bot Token</label>
-    <input class="tg-inp" id="tgToken" type="text" placeholder="123456:ABC-DEF..."/>
-    <label style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px">Chat ID</label>
-    <input class="tg-inp" id="tgChatId" type="text" placeholder="-100xxxxxxxxx"/>
-    <button class="btn btn-ghost btn-full" onclick="saveTg()">💾 Kaydet</button>
+    <div class="ctitle">Telegram Ayarlari</div>
+    <label style="font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px">Bot Token</label>
+    <input class="tgi" id="tgTok" type="text" placeholder="123456:ABC-DEF..."/>
+    <label style="font-size:9px;color:var(--t2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px">Chat ID</label>
+    <input class="tgi" id="tgCid" type="text" placeholder="-100xxxxxxxxx"/>
+    <button class="btn btn-gh" onclick="saveTg()" style="margin-top:2px">Kaydet</button>
   </div>
   <div class="card">
-    <div class="card-title">Rapor Gönder</div>
-    <button class="btn btn-tg btn-full" onclick="sendReport('daily')" style="margin-bottom:6px">📤 Günlük Rapor</button>
-    <button class="btn btn-tg btn-full" onclick="sendReport('weekly')" style="margin-bottom:6px;opacity:.85">📊 Haftalık Özet</button>
-    <button class="btn btn-tg btn-full" onclick="sendReport('breaks')" style="opacity:.7">☕ Mola Raporu</button>
-    <div class="tg-status" id="tgStatus"></div>
+    <div class="ctitle">Rapor Gonder</div>
+    <button class="btn btn-tg" onclick="sendRep('daily')" style="margin-bottom:7px">Gunluk Rapor</button>
+    <button class="btn btn-tg" onclick="sendRep('weekly')" style="margin-bottom:7px;opacity:.85">Haftalik Ozet</button>
+    <button class="btn btn-tg" onclick="sendRep('breaks')" style="opacity:.7">Mola Raporu</button>
+    <div class="tgs" id="tgSt"></div>
   </div>
-  <div class="card">
-    <div class="card-title">Rapor Önizleme</div>
-    <pre id="repPrev" style="font-family:var(--fm);font-size:10px;color:var(--text2);white-space:pre-wrap;line-height:1.7"></pre>
-  </div>
+  <div class="card"><div class="ctitle">Rapor Onizleme</div><pre id="tgPrev" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--t2);white-space:pre-wrap;line-height:1.7"></pre></div>
 </div>
-
-</div><!-- /scroll-area -->
-
+</div>
 <script>
-// ═══════════════════════════════════════════════
-//  SABİT VERİLER
-// ═══════════════════════════════════════════════
-const YKS_DATE = new Date('2025-06-14');
+var YKS_DATE=new Date('2025-06-14');
+var TOPICS={"Matematik TYT":["Temel Kavramlar","Sayi Basamaklari","OBEB-OKEK","Uslu Sayilar","Koklu Sayilar","Carpanlara Ayirma","1.Derece Denklemler","Esitsizlikler","Mutlak Deger","Oran-Orantı","Yuzde-Faiz","Problemler","Kumeler","Mantik","Fonksiyonlar","Olasilik","Istatistik","Sayi Dizileri"],"Matematik AYT":["Polinom","2.Derece Denklem","Trigonometri","Logaritma","Diziler","Limit","Turev","Integral","Analitik Geometri","Karmasik Sayilar","Matrisler"],"Fizik TYT":["Fizige Giris","Madde & Ozellikler","Kuvvet & Hareket","Enerji","Isi & Sicaklik","Elektrostatik","Elektrik Akimi","Dalgalar & Ses","Optik"],"Fizik AYT":["Vektorler","Kinematik","Dinamik","Is-Guc-Enerji","Momentum","BHH","Dalgalar","Optik","Elektrik Alani","Manyetizma","EM Induktion","Modern Fizik"],"Kimya TYT":["Kimyaya Giris","Atom Yapisi","Periyodik Tablo","Kimyasal Baglar","Kimyasal Tepkimeler","Maddenin Halleri","Karisimlar","Asit-Baz"],"Kimya AYT":["Mol Kavrami","Gazlar","Cozeltiler","Kimyasal Denge","Asit-Baz Dengesi","Elektrokimya","Reaksiyon Hizi","Organik Kimya","Hidrokarbonlar"],"Biyoloji TYT":["Canliların Ozellikleri","Hucre","Canliların Cesitliligi","Ekosistem"],"Biyoloji AYT":["Hucre Biyolojisi","Mitoz-Mayoz","Kalitim","DNA & Replikasyon","Protein Sentezi","Sinir Sistemi","Hormon Sistemi","Sindirim","Dolasim","Solunum","Bosaltim","Ureme","Ekoloji","Evrim"],"Turkce":["Ses Bilgisi","Yazim Kurallari","Noktalama","Isim","Sifat","Zamir","Zarf","Fiil","Fiilimsiler","Sozcukte Anlam","Cumlede Anlam","Paragraf","Ana Dusunce","Sozel Akil Yurutme"],"Tarih":["Ilk Cag","Orta Cag","Islam Tarihi","Osmanli Kurulus","Osmanli Yukselme","Osmanli Gerileme","I.Dunya Savasi","Kurtulus Savasi","Turk Inkilabi","Ataturk Ilkeleri","Yakin Donem"],"Cografya":["Harita Bilgisi","Iklim","Nufus & Yerlesmesi","Turkiye Cografyasi","Tarim","Enerji & Maden","Kuresel Sorunlar"],"Felsefe":["Felsefeye Giris","Epistemoloji","Ontoloji","Ahlak Felsefesi","Siyaset Felsefesi","Mantik"]};
+var DAYS=["Pzt","Sal","Car","Per","Cum","Cmt","Paz"];
+var BLOCKS={"Mat":["#4f7cff","rgba(79,124,255,.25)"],"Fiz":["#2ecc8f","rgba(46,204,143,.25)"],"Kim":["#ff8c42","rgba(255,140,66,.25)"],"Bio":["#a259ff","rgba(162,89,255,.25)"],"Turkce":["#ff4f6b","rgba(255,79,107,.25)"],"Tarih":["#f1c40f","rgba(241,196,15,.25)"],"Cog":["#1abc9c","rgba(26,188,156,.25)"],"Fel":["#e67e22","rgba(230,126,34,.25)"],"Mola":["#6b6d8a","rgba(107,109,138,.25)"]};
+var MOTS=[{t:"Bugun ekmek yemek istiyorsan dun tohum ekmus olman lazim.",a:"Cin Atasouzu"},{t:"Basari, her gun tekrarlanan kucuk cabalarin toplamıdır.",a:"Robert Collier"},{t:"Zorlu yollar guzel manzaralara cikar.",a:"-"},{t:"Disiplin, motivasyon olmadigi zamanlarda devreye girer.",a:"-"},{t:"Yavas bile olsa ilerlemek, durmaktan iyidir.",a:"-"},{t:"Bir yil sonra keskes bugun baslasaydim diyeceksin.",a:"-"},{t:"YKS bir maraton, yarin icin bugun calis.",a:"-"},{t:"Kendine inan, yeterince calisirsan basaramaycagin sey yok.",a:"-"}];
+var RESOURCES={"Matematik":{c:"#4f7cff",items:[{t:"yt",n:"Biyikli Matematik",d:"TYT & AYT tum konular",u:"https://www.youtube.com/@biyiklimatematik"},{t:"yt",n:"Edutorial",d:"AYT - turev, integral, limit",u:"https://www.youtube.com/@edutorial"},{t:"yt",n:"Ekol Hoca",d:"TYT soru cozumleri",u:"https://www.youtube.com/@ekolhoca"},{t:"kamp",n:"Tonguc Akademi",d:"Soru bankasi + video ders",u:"https://tongucakademi.com"},{t:"kamp",n:"Hocalara Geldik",d:"Ucretsiz TYT-AYT kampi",u:"https://hocalarageldik.com"}]},"Fizik":{c:"#2ecc8f",items:[{t:"yt",n:"Fizik Hocam",d:"TYT & AYT Fizik tum konular",u:"https://www.youtube.com/@fizikhocam"},{t:"yt",n:"Ogretmen TV Fizik",d:"Muzfredat uyumlu dersler",u:"https://www.youtube.com/@ogretmentv"},{t:"kamp",n:"Hocalara Geldik Fizik",d:"Ucretsiz AYT Fizik kampi",u:"https://hocalarageldik.com"},{t:"kamp",n:"Tonguc Akademi Fizik",d:"Animasyonlu konu videolari",u:"https://tongucakademi.com"}]},"Kimya":{c:"#ff8c42",items:[{t:"yt",n:"Kimya Hocam",d:"TYT & AYT Kimya tum konular",u:"https://www.youtube.com/@kimyahocam"},{t:"yt",n:"Ders Hocam Kimya",d:"Soru cozumu agirlikli",u:"https://www.youtube.com/@dershocam"},{t:"kamp",n:"Tonguc Akademi Kimya",d:"Konu + soru videolari",u:"https://tongucakademi.com"},{t:"kamp",n:"Hocalara Geldik Kimya",d:"Ucretsiz AYT kampi",u:"https://hocalarageldik.com"}]},"Biyoloji":{c:"#a259ff",items:[{t:"yt",n:"Biyoloji Hocam",d:"AYT Biyoloji tum uniteler",u:"https://www.youtube.com/@biyolojihocam"},{t:"yt",n:"Ogretmen TV Bio",d:"Gorsel destekli anlatim",u:"https://www.youtube.com/@ogretmentv"},{t:"yt",n:"Evrim Agaci",d:"Evrim, genetik, hucre",u:"https://www.youtube.com/@evrimagaci"},{t:"kamp",n:"Hocalara Geldik Bio",d:"Ucretsiz AYT Biyoloji kampi",u:"https://hocalarageldik.com"},{t:"kamp",n:"Tonguc Akademi Bio",d:"Ozet + soru videolari",u:"https://tongucakademi.com"}]}};
 
-const TOPICS = {
-  "📐 Matematik TYT": ["Temel Kavramlar","Sayı Basamakları","Bölme-Bölünebilme","OBEB-OKEK","Asal Sayılar","Üslü Sayılar","Köklü Sayılar","Çarpanlara Ayırma","1.Derece Denklemler","Denklem Sistemleri","Eşitsizlikler","Mutlak Değer","Oran-Orantı","Yüzde-Faiz","Problemler (Yaş/İşçi/Havuz)","Kümeler","Mantık","Fonksiyonlar","Permütasyon-Kombinasyon","Olasılık","İstatistik","Sayı Dizileri"],
-  "📐 Matematik AYT": ["Polinomlar","2.Derece Denklemler","Trigonometri","Logaritma","Diziler (Aritmetik-Geometrik)","Limit","Türev","İntegral","Analitik Geometri","Çember","Karmaşık Sayılar","Matrisler"],
-  "🔬 Fizik TYT": ["Fizik Bilimine Giriş","Madde & Özellikleri","Kuvvet & Hareket","Enerji","Isı & Sıcaklık","Elektrostatik","Elektrik Akımı","Dalgalar & Ses","Optik Temelleri"],
-  "🔬 Fizik AYT": ["Vektörler","Kinematik","Dinamik (Newton Yasaları)","İş-Güç-Enerji","Momentum & Çarpışma","Basit Harmonik Hareket","Dalgalar","Geometrik Optik","Elektrik Alanı","Manyetizma","Elektromanyetik İndüksiyon","Modern Fizik","Atom & Nükleer Fizik"],
-  "⚗️ Kimya TYT": ["Kimya Bilimine Giriş","Atom Yapısı","Periyodik Tablo","Kimyasal Türler","Kimyasal Bağlar","Kimyasal Tepkimeler","Maddenin Halleri","Karışımlar","Asit-Baz (Temel)"],
-  "⚗️ Kimya AYT": ["Mol Kavramı","Gazlar","Çözeltiler","Kimyasal Denge","Asit-Baz Dengesi","Çözünürlük Dengesi","Elektrokimya","Reaksiyon Hızı","Organik Kimya Temelleri","Hidrokarbonlar","Oksijen & Azot Bileşikleri","Polimer & Biyomolekül"],
-  "🧬 Biyoloji TYT": ["Canlıların Ortak Özellikleri","Hücre","Canlıların Çeşitliliği","Ekosistem"],
-  "🧬 Biyoloji AYT": ["Hücre Biyolojisi","Hücre Bölü
+var D=null;
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function defData(){var p={};for(var s in TOPICS){p[s]={};for(var i=0;i<TOPICS[s].length;i++)p[s][TOPICS[s][i]]=false;}return{prog:p,totalPom:0,totalBreak:0,todayPom:0,todayBreak:0,todayDate:todayStr(),exams:[],weekly:{},weekPlan:{},tgTok:'',tgCid:''};}
+function save(){if(!D)return;try{localStorage.setItem('yks_v3',JSON.stringify(D));}catch(e){}document.querySelector('.sdot').style.background='#2ecc8f';}
+function load(){try{var r=localStorage.getItem('yks_v3');if(r){D=JSON.parse(r);for(var s in TOPICS){if(!D.prog[s])D.prog[s]={};for(var i=0;i<TOPICS[s].length;i++)if(D.prog[s][TOPICS[s][i]]===undefined)D.prog[s][TOPICS[s][i]]=false;}if(!D.weekly)D.weekly={};if(!D.weekPlan)D.weekPlan={};}else D=defData();}catch(e){D=defData();}if(D.todayDate!==todayStr()){D.todayPom=0;D.todayBreak=0;D.todayDate=todayStr();save();}}
+
+document.getElementById('tabBar').addEventListener('click',function(e){var btn=e.target.closest('.tab');if(!btn)return;var t=btn.dataset.t;document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('on');});document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on');});btn.classList.add('on');document.getElementById('s-'+t).classList.add('on');if(t==='stat')renderCharts();if(t==='tg')renderTgPrev();if(t==='res')renderRes();if(t==='week')renderWeek();});
+
+function updateCD(){var diff=Math.ceil((YKS_DATE-new Date())/86400000);document.getElementById('cdN').textContent=diff>0?diff:'BUGÜN!';}
+var mIdx=0;
+function showMot(){var m=MOTS[mIdx];document.getElementById('motT').textContent=m.t;document.getElementById('motA').textContent='- '+m.a;}
+function nextMot(){mIdx=(mIdx+1)%MOTS.length;showMot();}
+setInterval(nextMot,30000);
+
+function subjProg(s){var t=D.prog[s]||{};var d=0;for(var k in t)if(t[k])d++;return{done:d,total:Object.keys(t).length};}
+function overallProg(){var done=0,total=0;for(var s in TOPICS){var p=subjProg(s);done+=p.done;total+=p.total;}return{done:done,total:total};}
+
+function renderDash(){
+  var months=['Oca','Sub','Mar','Nis','May','Haz','Tem','Agu','Eyl','Eki','Kas','Ara'];
+  var now=new Date();
+  document.getElementById('hDate').textContent='Efe - '+now.getDate()+' '+months[now.getMonth()]+' '+now.getFullYear();
+  document.getElementById('st1').textContent=D.totalPom;
+  document.getElementById('st2').textContent=D.totalBreak;
+  document.getElementById('st3').textContent=D.todayPom;
+  var p=overallProg();var pct=p.total?Math.round(p.done/p.total*100):0;
+  document.getElementById('ov1').textContent=p.done+'/'+p.total+' konu';
+  document.getElementById('ov2').textContent='%'+pct;
+  document.getElementById('ovB').style.width=pct+'%';
+  var el=document.getElementById('subjM');el.innerHTML='';
+  for(var s in TOPICS){var sp=subjProg(s);var pp=sp.total?Math.round(sp.done/sp.total*100):0;el.innerHTML+='<div style="margin-bottom:10px"><div class="ph"><span style="font-size:10px">'+s+'</span><span style="font-size:10px;color:var(--t2)">'+sp.done+'/'+sp.total+'</span></div><div class="pb"><div class="pbf" style="width:'+pp+'%;background:var(--ac)"></div></div></div>';}
+  if(D.exams.length>0){var last=D.exams[D.exams.length-1];document.getElementById('lastE').style.display='block';document.getElementById('lastEI').innerHTML='<div style="font-size:13px;font-weight:700">'+last.name+'</div><div style="font-family:JetBrains Mono,monospace;font-size:20px;color:var(--ac);margin:3px 0;font-weight:700">TYT: '+last.tyt+' AYT: '+last.ayt+'</div><div style="font-size:10px;color:var(--t2)">'+last.date+(last.note?' - '+last.note:'')+'</div>';}
+}
+
+var tRem=25*60,tTotal=25*60,tOn=false,tBreak=false,tInt=null;
+function setMode(isBreak,mins){if(tInt){clearInterval(tInt);tInt=null;}tOn=false;tBreak=isBreak;tRem=mins*60;tTotal=mins*60;var tag=document.getElementById('pomTag');var ring=document.getElementById('tRing');var sub=document.getElementById('tSub');var btn=document.getElementById('btnS');if(isBreak){tag.textContent='MOLA';tag.style.background='rgba(46,204,143,.18)';tag.style.color='var(--gr)';ring.style.stroke='#2ecc8f';sub.textContent='dinlen';}else{tag.textContent='CALISMA';tag.style.background='rgba(79,124,255,.18)';tag.style.color='var(--ac)';ring.style.stroke='#4f7cff';sub.textContent='odaklan';}btn.textContent='Baslat';btn.style.background='var(--gr)';updateTUI();}
+function toggleTimer(){if(tOn)pauseT();else startT();}
+function startT(){tOn=true;var btn=document.getElementById('btnS');btn.textContent='Durdur';btn.style.background='var(--or)';tInt=setInterval(function(){tRem--;if(tRem<=0){clearInterval(tInt);tInt=null;doneT();}else updateTUI();},1000);}
+function pauseT(){tOn=false;clearInterval(tInt);tInt=null;document.getElementById('btnS').textContent='Devam';document.getElementById('btnS').style.background='var(--gr)';}
+function resetTimer(){if(tInt){clearInterval(tInt);tInt=null;}tOn=false;tRem=tTotal;document.getElementById('btnS').textContent='Baslat';document.getElementById('btnS').style.background='var(--gr)';updateTUI();}
+function doneT(){tOn=false;if(!tBreak){D.totalPom++;D.todayPom++;var td=todayStr();D.weekly[td]=(D.weekly[td]||0)+1;save();renderDash();updateSesList();setTimeout(function(){setMode(true,5);},500);}else{var mins=Math.round(tTotal/60);D.totalBreak+=mins;D.todayBreak+=mins;save();renderDash();setTimeout(function(){setMode(false,25);},500);}}
+function updateTUI(){var m=Math.floor(tRem/60),s=tRem%60;document.getElementById('tTxt').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;document.getElementById('tRing').style.strokeDashoffset=553*(1-tRem/tTotal);}
+function updateSesList(){var el=document.getElementById('sesList');if(!D.todayPom){el.textContent='Henuz seans yok.';return;}var h='';for(var i=0;i<D.todayPom;i++)h+='&#127813; ';h+='<span style="color:var(--ac);font-weight:700"> '+D.todayPom+' seans</span>';el.innerHTML=h;}
+
+function renderTopics(){var p=overallProg();var pct=p.total?Math.round(p.done/p.total*100):0;document.getElementById('tov1').textContent=p.done+'/'+p.total;document.getElementById('tov2').textContent='%'+pct;document.getElementById('tovB').style.width=pct+'%';var el=document.getElementById('topList');el.innerHTML='';for(var subj in TOPICS){var sp=subjProg(subj);var pp=sp.total?Math.round(sp.done/sp.total*100):0;var id='sb_'+subj.replace(/\W/g,'_');var rows='';for(var i=0;i<TOPICS[subj].length;i++){var topic=TOPICS[subj][i];var ok=D.prog[subj]&&D.prog[subj][topic];rows+='<div class="tr '+(ok?'dn':'')+'" onclick="toggleT(\''+subj.replace(/'/g,"\\'")+'_SEP_'+topic.replace(/'/g,"\\'")+'\')"><div class="tcb">'+(ok?'v':'')+'</div><span class="tn">'+topic+'</span></div>';}el.innerHTML+='<div class="sh" id="h_'+id+'" onclick="togSubj(\''+id+'\')"><span class="sn">'+subj+'</span><span class="sp">'+sp.done+'/'+sp.total+' %'+pp+'</span></div><div class="stl" id="'+id+'">'+rows+'</div>';}}
+function togSubj(id){document.getElementById(id).classList.toggle('open');document.getElementById('h_'+id).classList.toggle('open');}
+function toggleT(key){var parts=key.split('_SEP_');var subj=parts[0];var topic=parts.slice(1).join('_SEP_');if(D.prog[subj])D.prog[subj][topic]=!D.prog[subj][topic];save();renderTopics();renderDash();}
+
+var dragEl=null,dragSrc=null,longPT=null;
+function renderWeek(){var pal=document.getElementById('wPal');pal.innerHTML='';for(var name in BLOCKS){var col=BLOCKS[name][0];var bg=BLOCKS[name][1];var b=document.createElement('div');b.className='wblk';b.textContent=name;b.style.cssText='background:'+bg+';border:1px solid '+col+'66;color:'+col+';padding:5px 9px;font-size:10px';b.dataset.name=name;b.dataset.col=col;b.dataset.bg=bg;b.draggable=true;b.addEventListener('dragstart',onDS);b.addEventListener('touchstart',onTS,{passive:true});pal.appendChild(b);}var grid=document.getElementById('wGrid');grid.innerHTML='';for(var i=0;i<7;i++){var col2=document.createElement('div');col2.className='dcol';col2.dataset.day=i;col2.innerHTML='<div class="dlbl">'+DAYS[i]+'</div>';var blocks=D.weekPlan[i]||[];for(var j=0;j<blocks.length;j++)col2.appendChild(makeBlk(blocks[j].name,blocks[j].col,blocks[j].bg,true));col2.addEventListener('dragover',function(e){e.preventDefault();this.classList.add('dov');});col2.addEventListener('dragleave',function(){this.classList.remove('dov');});col2.addEventListener('drop',function(e){e.preventDefault();onDrop(e,this);});grid.appendChild(col2);}}
+function makeBlk(name,col,bg,rem){var b=document.createElement('div');b.className='wblk';b.textContent=name;b.style.cssText='background:'+bg+';border:1px solid '+col+'66;color:'+col;b.dataset.name=name;b.dataset.col=col;b.dataset.bg=bg;b.draggable=true;b.addEventListener('dragstart',onDS);b.addEventListener('touchstart',onTS,{passive:true});if(rem){b.addEventListener('touchstart',function(){var self=this;longPT=setTimeout(function(){self.remove();saveWeek();},700);},{passive:true});b.addEventListener('touchend',function(){clearTimeout(longPT);});b.addEventListener('dblclick',function(){this.remove();saveWeek();});}return b;}
+function onDS(e){dragEl=e.currentTarget;dragSrc=dragEl.closest('.dcol');}
+document.addEventListener('dragend',function(){document.querySelectorAll('.dcol').forEach(function(c){c.classList.remove('dov');});});
+function onDrop(e,col){col.classList.remove('dov');if(!dragEl)return;if(dragSrc&&dragSrc!==col&&dragSrc.classList.contains('dcol'))dragEl.remove();if(!dragSrc||!dragSrc.classList.contains('dcol')||dragSrc!==col)col.appendChild(makeBlk(dragEl.dataset.name,dragEl.dataset.col,dragEl.dataset.bg,true));saveWeek();dragEl=null;dragSrc=null;}
+var tClone=null;
+function onTS(e){var el=e.currentTarget;dragEl=el;dragSrc=el.closest('.dcol');tClone=el.cloneNode(true);tClone.style.cssText+=';position:fixed;opacity:.75;pointer-events:none;z-index:9999';document.body.appendChild(tClone);function mv(e){var x=e.touches[0].clientX,y=e.touches[0].clientY;tClone.style.left=(x-30)+'px';tClone.style.top=(y-15)+'px';document.querySelectorAll('.dcol').forEach(function(c){c.classList.remove('dov');});var target=document.elementFromPoint(x,y);if(target){var dc=target.closest('.dcol');if(dc)dc.classList.add('dov');}}function up(e){document.removeEventListener('touchmove',mv);document.removeEventListener('touchend',up);if(tClone){tClone.remove();tClone=null;}document.querySelectorAll('.dcol').forEach(function(c){c.classList.remove('dov');});var x=e.changedTouches[0].clientX,y=e.changedTouches[0].clientY;var target=document.elementFromPoint(x,y);var col=target?target.closest('.dcol'):null;if(col){if(dragSrc&&dragSrc!==col&&dragSrc.classList.contains('dcol'))dragEl.remove();if(!dragSrc||!dragSrc.classList.contains('dcol')||dragSrc!==col)col.appendChild(makeBlk(dragEl.dataset.name,dragEl.dataset.col,dragEl.dataset.bg,true));saveWeek();}dragEl=null;dragSrc=null;}document.addEventListener('touchmove',mv,{passive:true});document.addEventListener('touchend',up);}
+function saveWeek(){D.weekPlan={};document.querySelectorAll('.dcol').forEach(function(col){var day=col.dataset.day;var blocks=[];col.querySelectorAll('.wblk').forEach(function(b){blocks.push({name:b.dataset.name,col:b.dataset.col,bg:b.dataset.bg});});if(blocks.length)D.weekPlan[day]=blocks;});save();}
+function clearWeek(){D.weekPlan={};save();renderWeek();}
+
+function addExam(){var name=document.getElementById('exN').value.trim()||'Deneme';var tyt=parseFloat(document.getElementById('exT').value)||0;var ayt=parseFloat(document.getElementById('exA').value)||0;var date=document.getElementById('exD').value||todayStr();var note=document.getElementById('exNo').value.trim();D.exams.push({name:name,tyt:tyt,ayt:ayt,date:date,note:note});save();renderExams();renderDash();document.getElementById('exN').value='';document.getElementById('exT').value='';document.getElementById('exA').value='';document.getElementById('exNo').value='';}
+function renderExams(){var el=document.getElementById('examList');if(!D.exams.length){el.innerHTML='<p style="color:var(--t2);font-size:12px;text-align:center;padding:16px">Henuz deneme eklenmedi.</p>';return;}var h='';var arr=[].concat(D.exams).reverse();for(var i=0;i<arr.length;i++){var e=arr[i];h+='<div class="ei"><div><div style="font-weight:700;font-size:13px">'+e.name+'</div><div style="font-size:10px;color:var(--t2)">'+e.date+(e.note?' - '+e.note:'')+'</div></div><div style="text-align:right"><div style="font-family:JetBrains Mono,monospace;font-size:15px;font-weight:700;color:var(--ac)">TYT: '+e.tyt+'</div><div style="font-family:JetBrains Mono,monospace;font-size:13px;color:var(--pu)">AYT: '+e.ayt+'</div></div></div>';}el.innerHTML=h;}
+
+var resOk=false;
+function renderRes(){if(resOk)return;resOk=true;var el=document.getElementById('resList');var h='';for(var subject in RESOURCES){var data=RESOURCES[subject];h+='<div class="rcard"><div class="rct" style="color:'+data.c+'">'+subject+'</div>';for(var i=0;i<data.items.length;i++){var item=data.items[i];h+='<div class="ri"><span class="rb '+(item.t==='yt'?'ryt':'rkamp')+'">'+(item.t==='yt'?'YT':'KAMP')+'</span><div><div class="rn">'+item.n+'</div><div class="rd">'+item.d+'</div><a href="'+item.u+'" target="_blank" rel="noopener">Ziyaret Et</a></div></div>';}h+='</div>';}el.innerHTML=h;}
+
+var wC=null,eC=null;
+function renderCharts(){var days=[],counts=[];for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var wd=d.getDay();days.push(DAYS[wd===0?6:wd-1]);counts.push(D.weekly[d.toISOString().slice(0,10)]||0);}var base={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#6b6d8a',font:{family:'JetBrains Mono',size:10}}},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#6b6d8a',font:{family:'JetBrains Mono',size:10}},beginAtZero:true}}};if(wC)wC.destroy();wC=new Chart(document.getElementById('wChart'),{type:'bar',data:{labels:days,datasets:[{data:counts,backgroundColor:'rgba(79,124,255,.7)',borderRadius:5,borderSkipped:false}]},options:base});if(eC)eC.destroy();var exL=D.exams.slice(-8).map(function(e){return e.date.slice(5);});var exT=D.exams.slice(-8).map(function(e){return e.tyt;});var exA=D.exams.slice(-8).map(function(e){return e.ayt;});var opt2=JSON.parse(JSON.stringify(base));opt2.plugins={legend:{display:true,labels:{color:'#6b6d8a',font:{family:'JetBrains Mono',size:10}}}};eC=new Chart(document.getElementById('eChart'),{type:'line',data:{labels:exL.length?exL:['—'],datasets:[{label:'TYT',data:exT,borderColor:'#4f7cff',backgroundColor:'rgba(79,124,255,.1)',tension:.4,fill:true,pointRadius:3},{label:'AYT',data:exA,borderColor:'#a259ff',backgroundColor:'rgba(162,89,255,.1)',tension:.4,fill:true,pointRadius:3}]},options:opt2});var p=overallProg();document.getElementById('allSt').textContent='Toplam Pomodoro: '+D.totalPom+'\nToplam Mola: '+D.totalBreak+' dk\nBugunku Pomodoro: '+D.todayPom+'\nDeneme Sayisi: '+D.exams.length+'\nTamamlanan Konu: '+p.done+'/'+p.total+'\nGenel Ilerleme: %'+(p.total?Math.round(p.done/p.total*100):0);}
+
+function saveTg(){D.tgTok=document.getElementById('tgTok').value.trim();D.tgCid=document.getElementById('tgCid').value.trim();save();showTgSt('Kaydedildi!','ok');}
+function buildRep(type){var now=new Date().toLocaleString('tr-TR');var p=overallProg();var pct=p.total?Math.round(p.done/p.total*100):0;var lines=['YKS Raporu - Efe',now,''];if(type==='daily'||type==='breaks'){lines.push('Bugun: '+D.todayPom+' pomodoro');lines.push('Bugun: '+D.todayBreak+' dk mola');lines.push('Toplam: '+D.totalPom+' pomodoro');lines.push('Toplam: '+D.totalBreak+' dk mola');}if(type==='weekly'){lines.push('Bu Hafta:');for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);var key=d.toISOString().slice(0,10);lines.push('  '+key.slice(5)+' -> '+(D.weekly[key]||0)+' pomodoro');}}lines.push('');lines.push('Genel: '+p.done+'/'+p.total+' (%'+pct+')');lines.push('');for(var s in TOPICS){var sp=subjProg(s);var pp=sp.total?Math.round(sp.done/sp.total*100):0;lines.push(s+': '+sp.done+'/'+sp.total+' (%'+pp+')');}if(D.exams.length>0){var last=D.exams[D.exams.length-1];lines.push('Son Deneme: '+last.name+' TYT:'+last.tyt+' AYT:'+last.ayt);}return lines.join('\n');}
+function renderTgPrev(){if(D.tgTok)document.getElementById('tgTok').value=D.tgTok;if(D.tgCid)document.getElementById('tgCid').value=D.tgCid;document.getElementById('tgPrev').textContent=buildRep('daily');}
+function sendRep(type){var tok=document.getElementById('tgTok').value.trim()||D.tgTok;var cid=document.getElementById('tgCid').value.trim()||D.tgCid;if(!tok||!cid){showTgSt('Token veya Chat ID eksik!','err');return;}showTgSt('Gonderiliyor...','ok');fetch('https://api.telegram.org/bot'+tok+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:cid,text:buildRep(type)})}).then(function(r){return r.json();}).then(function(j){if(j.ok)showTgSt('Rapor gonderildi!','ok');else showTgSt('Hata: '+j.description,'err');}).catch(function(){showTgSt('Baglanti hatasi','err');});}
+function showTgSt(msg,type){var el=document.getElementById('tgSt');el.textContent=msg;el.className='tgs '+type;}
+
+load();
+updateCD();
+showMot();
+renderDash();
+renderTopics();
+renderExams();
+updateTUI();
+updateSesList();
+document.getElementById('exD').value=todayStr();
+setInterval(updateCD,60000);
+</script>
+</body>
+</html>
