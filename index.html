@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+<title>YKS — Efe</title>
+<meta name="theme-color" content="#07080f"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="YKS Efe"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#07080f;--surface:#0e0f1c;--surface2:#161728;--border:#1e2035;
+  --accent:#4f7cff;--green:#2ecc8f;--orange:#ff8c42;--red:#ff4f6b;--purple:#a259ff;
+  --text:#e8e9f5;--text2:#6b6d8a;
+  --fd:'Syne',sans-serif;--fm:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;height:-webkit-fill-available}body{height:100%;height:-webkit-fill-available;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--fd);display:flex;flex-direction:column}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,124,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(79,124,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+/* HEADER */
+.header{flex-shrink:0;padding:16px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(7,8,15,.95);backdrop-filter:blur(12px);position:relative;z-index:100}
+.header h1{font-size:20px;font-weight:800;background:linear-gradient(135deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header p{font-size:10px;color:var(--text2);font-family:var(--fm);margin-top:1px}
+.countdown{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:6px 12px;text-align:center}
+.countdown .d{font-size:20px;font-weight:800;color:var(--orange);font-family:var(--fm)}
+.countdown .l{font-size:8px;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+
+/* TABS */
+.tabs{flex-shrink:0;display:flex;gap:4px;padding:8px 12px;overflow-x:auto;scrollbar-width:none;background:rgba(7,8,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:relative;z-index:99}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:6px 12px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--text2);font-family:var(--fd);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab:hover{color:var(--text);background:var(--surface2)}
+.tab.active{background:var(--accent);color:#fff}
+
+/* SCROLL AREA */
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative;z-index:1;padding-bottom:16px}
+.scroll-area::-webkit-scrollbar{display:none}
+.scroll-area{scrollbar-width:none}
+
+/* SECTIONS */
+.sec{display:none;padding:12px}
+.sec.active{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.card-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text2);margin-bottom:12px}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center}
+.stat-box .si{font-size:18px;margin-bottom:2px}
+.stat-box .sv{font-size:20px;font-weight:800;font-family:var(--fm)}
+.stat-box .sl{font-size:9px;color:var(--text2);margin-top:1px}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:8px}
+.prog-header{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px}
+.prog-bar{height:7px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* MOTIVATION */
+.mot-card{background:linear-gradient(135deg,rgba(79,124,255,.12),rgba(162,89,255,.08));border:1px solid rgba(79,124,255,.25);border-radius:14px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden;cursor:pointer}
+.mot-card::before{content:'"';position:absolute;top:-8px;left:8px;font-size:64px;color:rgba(79,124,255,.12);font-family:Georgia,serif;line-height:1}
+.mot-text{font-size:14px;font-weight:600;line-height:1.6;position:relative}
+.mot-author{font-size:11px;color:var(--text2);margin-top:6px;font-style:italic}
+
+/* BUTTONS */
+.btn{padding:11px 18px;border-radius:11px;border:none;font-family:var(--fd);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.96)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-success{background:var(--green);color:#fff}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-full{width:100%;margin-top:8px}
+.btn-tg{background:linear-gradient(135deg,#229ED9,#1a7fc1);color:#fff}
+.btn-danger{background:var(--red);color:#fff}
+
+/* TIMER */
+.timer-wrap{display:flex;justify-content:center;margin:6px 0 14px}
+.timer-wrap svg{filter:drop-shadow(0 0 14px rgba(79,124,255,.25))}
+.timer-ctrl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.timer-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+
+/* TOPICS */
+.subj-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;cursor:pointer;margin-bottom:5px;transition:border-color .2s;-webkit-tap-highlight-color:transparent}
+.subj-hdr:hover{border-color:var(--accent)}
+.subj-hdr .sn{font-size:13px;font-weight:700}
+.subj-hdr .sp{font-family:var(--fm);font-size:11px;color:var(--accent)}
+.subj-topics{display:none;padding:2px 0 8px 6px}
+.subj-topics.open{display:block}
+.topic-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;transition:background .15s;font-size:12px;-webkit-tap-highlight-color:transparent}
+.topic-row:hover,.topic-row:active{background:var(--surface2)}
+.topic-cb{width:16px;height:16px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;font-size:10px}
+.topic-row.done .topic-cb{background:var(--green);border-color:var(--green);color:#fff}
+.topic-row.done .topic-nm{color:var(--text2);text-decoration:line-through}
+
+/* DENEME */
+.inp-grp{margin-bottom:8px}
+.inp-grp label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px}
+.inp-grp input,.inp-grp select{width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--fd);font-size:13px;outline:none;transition:border-color .2s}
+.inp-grp input:focus{border-color:var(--accent)}
+.exam-item{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.exam-item .escore{font-family:var(--fm);font-size:16px;font-weight:700;color:var(--accent)}
+
+/* CHART */
+.chart-wrap{position:relative;height:160px}
+
+/* TELEGRAM */
+.tg-inp{width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:var(--fm);font-size:12px;outline:none;margin-bottom:8px;transition:border-color .2s}
+.tg-inp:focus{border-color:#229ED9}
+.tg-status{padding:9px 12px;border-radius:9px;font-size:12px;font-weight:600;text-align:center;display:none;margin-top:8px}
+.tg-status.ok{background:rgba(46,204,143,.15);color:var(--green);display:block}
+.tg-status.err{background:rgba(255,79,107,.15);color:var(--red);display:block}
+
+/* WEEKLY SCHEDULE */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:10px}
+.day-col{min-height:320px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:6px 4px;display:flex;flex-direction:column;gap:4px;transition:border-color .2s}
+.day-col.drag-over{border-color:var(--accent);background:rgba(79,124,255,.08)}
+.day-label{font-size:9px;font-weight:700;text-align:center;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;flex-shrink:0}
+.week-block{border-radius:7px;padding:5px 4px;font-size:9px;font-weight:700;text-align:center;cursor:grab;user-select:none;transition:all .2s;-webkit-tap-highlight-color:transparent;line-height:1.3}
+.week-block:active{cursor:grabbing;transform:scale(.95);opacity:.8}
+.week-block.dragging{opacity:.4;transform:scale(.9)}
+
+/* RESOURCES */
+.res-card{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:12px;margin-bottom:8px}
+.res-card .rc-title{font-size:13px;font-weight:700;margin-bottom:6px}
+.res-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px}
+.res-item:last-child{border-bottom:none}
+.res-item .yt{background:#ff0000;color:#fff;border-radius:4px;padding:2px 5px;font-size:9px;font-weight:700;flex-shrink:0}
+.res-item .kamp{background:var(--purple);color:#fff;border-radius:4px;padding:2px 5px;font-size:9px;font-weight:700;flex-shrink:0}
+.res-link{color:var(--accent);text-decoration:none;font-size:11px}
+
+/* SAVE INDICATOR */
+.save-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-left:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>YKS Paneli <span class="save-dot" id="saveDot" title="Veriler kaydediliyor"></span></h1>
+    <p id="headerDate">Efe · yükleniyor...</p>
+  </div>
+  <div class="countdown">
+    <div class="d" id="cdDays">—</div>
+    <div class="l">gün kaldı</div>
+  </div>
+</div>
+
+<div class="tabs" id="tabBar">
+  <button class="tab active" data-tab="dashboard">🏠 Ana</button>
+  <button class="tab" data-tab="pomodoro">🍅 Pomodoro</button>
+  <button class="tab" data-tab="topics">📚 Konular</button>
+  <button class="tab" data-tab="weekly">📅 Program</button>
+  <button class="tab" data-tab="deneme">📝 Deneme</button>
+  <button class="tab" data-tab="resources">🎥 Kaynaklar</button>
+  <button class="tab" data-tab="stats">📊 Grafik</button>
+  <button class="tab" data-tab="telegram">📤 Rapor</button>
+</div>
+
+<div class="scroll-area">
+
+<!-- DASHBOARD -->
+<div class="sec active" id="sec-dashboard">
+  <div class="mot-card" onclick="nextMotivation()">
+    <div class="mot-text" id="motText">Yükleniyor...</div>
+    <div class="mot-author" id="motAuthor"></div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-box"><div class="si">🍅</div><div class="sv" id="st1" style="color:var(--accent)">0</div><div class="sl">Pomodoro</div></div>
+    <div class="stat-box"><div class="si">☕</div><div class="sv" id="st2" style="color:var(--green)">0</div><div class="sl">Mola dk</div></div>
+    <div class="stat-box"><div class="si">📅</div><div class="sv" id="st3" style="color:var(--orange)">0</div><div class="sl">Bugün</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Genel İlerleme</div>
+    <div class="prog-wrap">
+      <div class="prog-header"><span id="ov1">0/0 konu</span><span id="ov2" style="color:var(--accent);font-weight:700">%0</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="ovBar" style="width:0%;background:var(--accent)"></div></div>
+    </div>
+  </div>
+  <div class="card"><div class="card-title">Dersler</div><div id="subjMini"></div></div>
+  <div class="card" id="lastExamCard" style="display:none">
+    <div class="card-title">Son Deneme</div>
+    <div id="lastExamInfo"></div>
+  </div>
+</div>
+
+<!-- POMODORO -->
+<div class="sec" id="sec-pomodoro">
+  <div class="card" style="text-align:center">
+    <div style="margin-bottom:6px">
+      <span id="pomTag" style="display:inline-block;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700;background:rgba(79,124,255,.2);color:var(--accent)">ÇALIŞMA</span>
+    </div>
+    <div class="timer-wrap">
+      <svg width="180" height="180" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="88" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="10"/>
+        <circle id="timerRing" cx="100" cy="100" r="88" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" stroke-dasharray="553" stroke-dashoffset="0" transform="rotate(-90 100 100)" style="transition:stroke-dashoffset .5s linear"/>
+        <text x="100" y="96" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="36" font-weight="700" fill="#e8e9f5" id="timerTxt">25:00</text>
+        <text x="100" y="116" text-anchor="middle" font-family="Syne,sans-serif" font-size="11" font-weight="600" fill="#6b6d8a" id="timerSub">odaklan</text>
+      </svg>
+    </div>
+    <div class="timer-ctrl">
+      <button class="btn btn-success" id="btnStart" onclick="toggleTimer()">▶ Başlat</button>
+      <button class="btn btn-ghost" onclick="resetTimer()">⟳ Sıfırla</button>
+    </div>
+    <div class="timer-quick">
+      <button class="btn btn-ghost" style="font-size:11px" onclick="setMode('work',25)">25 dk</button>
+      <button class="btn btn-ghost" style="font-size:11px" onclick="setMode('work',50)">50 dk</button>
+      <button class="btn btn-ghost" style="font-size:11px" onclick="setMode('break',5)">5 dk ☕</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Bugünkü Seanslar</div>
+    <div id="sessionList" style="font-size:12px;color:var(--text2);line-height:2.2">Henüz seans yok.</div>
+  </div>
+</div>
+
+<!-- TOPICS -->
+<div class="sec" id="sec-topics">
+  <div class="card">
+    <div class="card-title">Toplam İlerleme</div>
+    <div class="prog-wrap">
+      <div class="prog-header"><span id="topOv1">0/0</span><span id="topOv2" style="color:var(--green);font-weight:700">%0</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="topOvBar" style="width:0%;background:var(--green)"></div></div>
+    </div>
+  </div>
+  <div id="topicsList"></div>
+</div>
+
+<!-- WEEKLY PROGRAM -->
+<div class="sec" id="sec-weekly">
+  <div class="card">
+    <div class="card-title">Haftalık Program — Sürükle & Bırak</div>
+    <p style="font-size:11px;color:var(--text2);margin-bottom:10px">Ders bloklarını günlere sürükle. Dokunup basılı tut, sonra bırak.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px" id="blockPalette"></div>
+    <div class="week-grid" id="weekGrid"></div>
+    <button class="btn btn-ghost btn-full" onclick="clearWeekly()" style="margin-top:4px;font-size:12px">🗑 Programı Temizle</button>
+  </div>
+</div>
+
+<!-- DENEME -->
+<div class="sec" id="sec-deneme">
+  <div class="card">
+    <div class="card-title">Yeni Deneme Ekle</div>
+    <div class="inp-grp"><label>Sınav Adı</label><input id="exName" type="text" placeholder="TYT Deneme #1"/></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="inp-grp"><label>TYT Net</label><input id="exTyt" type="number" placeholder="0" min="0" max="120"/></div>
+      <div class="inp-grp"><label>AYT Net</label><input id="exAyt" type="number" placeholder="0" min="0" max="80"/></div>
+    </div>
+    <div class="inp-grp"><label>Tarih</label><input id="exDate" type="date"/></div>
+    <div class="inp-grp"><label>Not</label><input id="exNote" type="text" placeholder="Opsiyonel..."/></div>
+    <button class="btn btn-primary btn-full" onclick="addExam()">✚ Ekle</button>
+  </div>
+  <div id="examList"></div>
+</div>
+
+<!-- RESOURCES -->
+<div class="sec" id="sec-resources">
+  <div style="font-size:11px;color:var(--text2);margin-bottom:10px;padding:0 2px">YKS için önerilen YouTube kanalları ve kamplar 🎯</div>
+  <div id="resourcesList"></div>
+</div>
+
+<!-- STATS -->
+<div class="sec" id="sec-stats">
+  <div class="card"><div class="card-title">Haftalık Pomodoro</div><div class="chart-wrap"><canvas id="weeklyChart"></canvas></div></div>
+  <div class="card"><div class="card-title">Deneme Netleri</div><div class="chart-wrap"><canvas id="examChart"></canvas></div></div>
+  <div class="card"><div class="card-title">Özet</div><div id="allStats" style="font-family:var(--fm);font-size:12px;line-height:2.2;color:var(--text2)"></div></div>
+</div>
+
+<!-- TELEGRAM -->
+<div class="sec" id="sec-telegram">
+  <div class="card">
+    <div class="card-title">Telegram Ayarları</div>
+    <label style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px">Bot Token</label>
+    <input class="tg-inp" id="tgToken" type="text" placeholder="123456:ABC-DEF..."/>
+    <label style="font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px">Chat ID</label>
+    <input class="tg-inp" id="tgChatId" type="text" placeholder="-100xxxxxxxxx"/>
+    <button class="btn btn-ghost btn-full" onclick="saveTg()">💾 Kaydet</button>
+  </div>
+  <div class="card">
+    <div class="card-title">Rapor Gönder</div>
+    <button class="btn btn-tg btn-full" onclick="sendReport('daily')" style="margin-bottom:6px">📤 Günlük Rapor</button>
+    <button class="btn btn-tg btn-full" onclick="sendReport('weekly')" style="margin-bottom:6px;opacity:.85">📊 Haftalık Özet</button>
+    <button class="btn btn-tg btn-full" onclick="sendReport('breaks')" style="opacity:.7">☕ Mola Raporu</button>
+    <div class="tg-status" id="tgStatus"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Rapor Önizleme</div>
+    <pre id="repPrev" style="font-family:var(--fm);font-size:10px;color:var(--text2);white-space:pre-wrap;line-height:1.7"></pre>
+  </div>
+</div>
+
+</div><!-- /scroll-area -->
+
+<script>
+// ═══════════════════════════════════════════════
+//  SABİT VERİLER
+// ═══════════════════════════════════════════════
+const YKS_DATE = new Date('2025-06-14');
+
+const TOPICS = {
+  "📐 Matematik TYT": ["Temel Kavramlar","Sayı Basamakları","Bölme-Bölünebilme","OBEB-OKEK","Asal Sayılar","Üslü Sayılar","Köklü Sayılar","Çarpanlara Ayırma","1.Derece Denklemler","Denklem Sistemleri","Eşitsizlikler","Mutlak Değer","Oran-Orantı","Yüzde-Faiz","Problemler (Yaş/İşçi/Havuz)","Kümeler","Mantık","Fonksiyonlar","Permütasyon-Kombinasyon","Olasılık","İstatistik","Sayı Dizileri"],
+  "📐 Matematik AYT": ["Polinomlar","2.Derece Denklemler","Trigonometri","Logaritma","Diziler (Aritmetik-Geometrik)","Limit","Türev","İntegral","Analitik Geometri","Çember","Karmaşık Sayılar","Matrisler"],
+  "🔬 Fizik TYT": ["Fizik Bilimine Giriş","Madde & Özellikleri","Kuvvet & Hareket","Enerji","Isı & Sıcaklık","Elektrostatik","Elektrik Akımı","Dalgalar & Ses","Optik Temelleri"],
+  "🔬 Fizik AYT": ["Vektörler","Kinematik","Dinamik (Newton Yasaları)","İş-Güç-Enerji","Momentum & Çarpışma","Basit Harmonik Hareket","Dalgalar","Geometrik Optik","Elektrik Alanı","Manyetizma","Elektromanyetik İndüksiyon","Modern Fizik","Atom & Nükleer Fizik"],
+  "⚗️ Kimya TYT": ["Kimya Bilimine Giriş","Atom Yapısı","Periyodik Tablo","Kimyasal Türler","Kimyasal Bağlar","Kimyasal Tepkimeler","Maddenin Halleri","Karışımlar","Asit-Baz (Temel)"],
+  "⚗️ Kimya AYT": ["Mol Kavramı","Gazlar","Çözeltiler","Kimyasal Denge","Asit-Baz Dengesi","Çözünürlük Dengesi","Elektrokimya","Reaksiyon Hızı","Organik Kimya Temelleri","Hidrokarbonlar","Oksijen & Azot Bileşikleri","Polimer & Biyomolekül"],
+  "🧬 Biyoloji TYT": ["Canlıların Ortak Özellikleri","Hücre","Canlıların Çeşitliliği","Ekosistem"],
+  "🧬 Biyoloji AYT": ["Hücre Biyolojisi","Hücre Bölü
