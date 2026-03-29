@@ -2,16 +2,15 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>YKS 2026 — Efe</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>YKS 2026 — Efe V6</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg: #07080f; --sf: #0e0f1c; --sf2: #161728; --bd: #1e2035;
+            --bg: #05060a; --sf: #0d0e1a; --sf2: #15172b; --bd: #1e203d;
             --ac: #4f7cff; --gr: #2ecc8f; --or: #ff8c42; --rd: #ff4f6b;
-            --pu: #a259ff; --tx: #e8e9f5; --t2: #6b6d8a;
+            --pu: #a259ff; --tx: #f0f2faff; --t2: #8084a8;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -19,546 +18,501 @@
         body {
             background: var(--bg); color: var(--tx); font-family: 'Syne', sans-serif;
             overflow: hidden; height: 100vh; display: flex; flex-direction: column;
+            line-height: 1.4;
         }
 
-        /* Arka Plan Izgara Efekti */
-        body::before {
-            content: ''; position: fixed; inset: 0;
-            background-image: linear-gradient(rgba(79, 124, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(79, 124, 255, 0.03) 1px, transparent 1px);
-            background-size: 30px 30px; z-index: 0; pointer-events: none;
+        /* 9:16 App Container Feel */
+        @media (min-width: 500px) {
+            body { width: 400px; margin: 0 auto; border-left: 1px solid var(--bd); border-right: 1px solid var(--bd); }
         }
 
-        /* Header */
+        /* Header & Logo */
         header {
-            padding: 15px 20px; background: rgba(7, 8, 15, 0.95);
-            border-bottom: 1px solid var(--bd); display: flex;
-            justify-content: space-between; align-items: center; z-index: 100;
+            padding: 20px; background: rgba(5, 6, 10, 0.8); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--bd); display: flex; justify-content: space-between; align-items: center; z-index: 1000;
         }
 
-        .h-title h1 { font-size: 1.1rem; font-weight: 800; background: linear-gradient(to right, #fff, var(--ac)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .h-title p { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--t2); }
+        .logo-wrap { display: flex; align-items: center; gap: 10px; }
+        .tomato-logo {
+            width: 32px; height: 32px; background: var(--rd); border-radius: 50%;
+            position: relative; box-shadow: 0 0 15px rgba(255, 79, 107, 0.5);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .tomato-logo::before {
+            content: ''; position: absolute; top: -4px; width: 8px; height: 8px;
+            background: var(--gr); clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+        }
 
-        .yks-timer { background: var(--sf2); border: 1px solid var(--bd); padding: 5px 12px; border-radius: 10px; text-align: right; }
-        .yks-timer span { display: block; font-family: 'JetBrains Mono'; color: var(--or); font-weight: 700; font-size: 1.1rem; }
-        .yks-timer label { font-size: 0.6rem; text-transform: uppercase; color: var(--t2); }
+        .h-text h1 { font-size: 1rem; font-weight: 800; letter-spacing: -0.5px; }
+        .h-text p { font-size: 0.65rem; color: var(--t2); font-family: 'JetBrains Mono'; }
 
-        /* Navigasyon */
+        /* Stats Bar */
+        .top-stats { display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; scrollbar-width: none; }
+        .stat-pill {
+            background: var(--sf); border: 1px solid var(--bd); padding: 8px 15px;
+            border-radius: 20px; display: flex; align-items: center; gap: 8px; white-space: nowrap;
+        }
+        .stat-pill i { font-size: 0.8rem; }
+        .stat-pill b { font-family: 'JetBrains Mono'; font-size: 0.9rem; color: var(--ac); }
+
+        /* Main Nav - Bottom Fixed Like App */
         nav {
-            display: flex; overflow-x: auto; padding: 10px; gap: 8px;
-            background: rgba(7, 8, 15, 0.9); border-bottom: 1px solid var(--bd);
-            scrollbar-width: none; z-index: 99;
+            position: fixed; bottom: 0; width: 100%; max-width: 400px;
+            background: rgba(13, 14, 26, 0.95); backdrop-filter: blur(20px);
+            border-top: 1px solid var(--bd); display: flex; justify-content: space-around;
+            padding: 10px 0 25px; z-index: 1000;
         }
-        nav::-webkit-scrollbar { display: none; }
-        .nav-link {
-            padding: 8px 16px; background: var(--sf); border: 1px solid var(--bd);
-            color: var(--t2); border-radius: 8px; font-size: 0.8rem; font-weight: 700;
-            white-space: nowrap; cursor: pointer; transition: 0.3s;
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            color: var(--t2); cursor: pointer; transition: 0.3s;
         }
-        .nav-link.active { background: var(--ac); color: #fff; border-color: var(--ac); box-shadow: 0 0 15px rgba(79, 124, 255, 0.4); }
+        .nav-item.active { color: var(--ac); }
+        .nav-item svg { width: 20px; height: 20px; fill: currentColor; }
+        .nav-item span { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
 
-        /* Ana İçerik */
-        main { flex: 1; overflow-y: auto; padding: 15px; z-index: 1; scrollbar-width: none; }
-        main::-webkit-scrollbar { display: none; }
-        .page { display: none; animation: fadeIn 0.4s ease-out; }
+        /* Content Sections */
+        main { flex: 1; overflow-y: auto; padding: 0 20px 100px; }
+        .page { display: none; animation: slideIn 0.3s ease-out; }
         .page.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Cards & Glassmorphism */
+        .card {
+            background: var(--sf); border: 1px solid var(--bd); border-radius: 20px;
+            padding: 20px; margin-bottom: 15px; position: relative;
+        }
+        .card-label { font-size: 0.6rem; color: var(--t2); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; display: block; }
 
-        /* Kartlar */
-        .card { background: var(--sf); border: 1px solid var(--bd); border-radius: 16px; padding: 15px; margin-bottom: 15px; position: relative; overflow: hidden; }
-        .card-title { font-size: 0.7rem; color: var(--t2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-weight: 700; }
+        /* Pomodoro Timer V6 */
+        .timer-container { text-align: center; padding: 20px 0; }
+        .timer-circle {
+            width: 240px; height: 240px; margin: 0 auto; position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .timer-svg { transform: rotate(-90deg); width: 100%; height: 100%; position: absolute; }
+        .timer-bg { fill: none; stroke: var(--sf2); stroke-width: 6; }
+        .timer-bar { 
+            fill: none; stroke: var(--ac); stroke-width: 6; stroke-linecap: round; 
+            stroke-dasharray: 691; stroke-dashoffset: 0; transition: 1s linear; 
+            filter: drop-shadow(0 0 5px var(--ac));
+        }
+        .timer-display { font-family: 'JetBrains Mono'; font-size: 3.5rem; font-weight: 700; z-index: 5; }
 
-        /* Pomodoro */
-        .pomo-circle { position: relative; width: 200px; height: 200px; margin: 20px auto; }
-        .pomo-svg { transform: rotate(-90deg); width: 200px; height: 200px; }
-        .pomo-bg { fill: none; stroke: var(--sf2); stroke-width: 8; }
-        .pomo-bar { fill: none; stroke: var(--ac); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 603; stroke-dashoffset: 0; transition: 1s linear; }
-        .pomo-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        #timer-val { font-family: 'JetBrains Mono'; font-size: 2.5rem; font-weight: 700; }
+        /* Sound Player */
+        .music-player {
+            display: flex; justify-content: center; gap: 15px; margin-top: 20px;
+            background: var(--sf2); padding: 10px; border-radius: 50px;
+        }
+        .music-btn {
+            width: 35px; height: 35px; border-radius: 50%; border: none;
+            background: var(--bd); color: var(--tx); cursor: pointer; font-size: 0.8rem;
+        }
+        .music-btn.playing { background: var(--ac); box-shadow: 0 0 10px var(--ac); }
 
-        /* Butonlar */
-        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .btn { padding: 12px; border: none; border-radius: 10px; font-family: 'Syne'; font-weight: 700; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
+        /* Modern Topics */
+        .topic-card {
+            background: var(--sf2); border-radius: 15px; padding: 15px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid var(--bd); transition: 0.3s;
+        }
+        .topic-card.done { border-left-color: var(--gr); background: rgba(46, 204, 143, 0.05); }
+        .topic-info h4 { font-size: 0.85rem; }
+        .topic-info p { font-size: 0.7rem; color: var(--t2); }
+        .check-btn {
+            width: 25px; height: 25px; border-radius: 50%; border: 2px solid var(--bd);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .topic-card.done .check-btn { background: var(--gr); border-color: var(--gr); color: #fff; }
+
+        /* Program V6 - List Style */
+        .agenda-item {
+            display: flex; gap: 15px; margin-bottom: 20px; position: relative;
+        }
+        .agenda-time { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--ac); width: 40px; padding-top: 5px; }
+        .agenda-content {
+            flex: 1; background: var(--sf); border: 1px solid var(--bd); padding: 15px;
+            border-radius: 15px; border-left: 3px solid var(--ac);
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%; padding: 15px; border-radius: 15px; border: none;
+            font-family: 'Syne'; font-weight: 800; cursor: pointer; transition: 0.2s;
+            margin-top: 10px;
+        }
         .btn-ac { background: var(--ac); color: #fff; }
         .btn-gr { background: var(--gr); color: #fff; }
-        .btn-rd { background: var(--rd); color: #fff; }
-        .btn-pu { background: var(--pu); color: #fff; }
-        .btn-bd { background: var(--sf2); color: var(--tx); border: 1px solid var(--bd); }
-        .btn:active { transform: scale(0.95); }
+        .btn-sf { background: var(--sf2); color: var(--tx); }
+        .btn:active { transform: scale(0.98); }
 
-        /* Konular & Akordeon */
-        .acc-item { border: 1px solid var(--bd); border-radius: 10px; margin-bottom: 8px; }
-        .acc-head { padding: 12px; background: var(--sf2); cursor: pointer; display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; }
-        .acc-body { display: none; padding: 10px; background: var(--sf); }
-        .topic { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
-        .topic:last-child { border-bottom: none; }
-        .topic input { accent-color: var(--gr); width: 16px; height: 16px; }
+        input {
+            width: 100%; background: var(--sf2); border: 1px solid var(--bd);
+            padding: 15px; border-radius: 12px; color: #fff; font-family: 'Syne'; margin-bottom: 10px;
+        }
 
-        /* Program Grid */
-        .prog-grid { display: grid; grid-template-columns: repeat(7, 120px); gap: 10px; overflow-x: auto; padding-bottom: 10px; }
-        .prog-day { background: var(--sf2); border-radius: 10px; min-height: 200px; padding: 8px; }
-        .day-title { text-align: center; font-size: 0.7rem; color: var(--t2); margin-bottom: 10px; font-weight: 800; }
-        .drop-zone { min-height: 150px; }
-        .drag-item { padding: 6px; margin-bottom: 6px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-align: center; cursor: grab; background: var(--ac); color: #fff; }
-
-        /* Kamplar Listesi */
-        .camp-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--sf2); border-radius: 12px; margin-bottom: 10px; text-decoration: none; color: inherit; border: 1px solid var(--bd); }
-        .camp-img { width: 40px; height: 40px; background: var(--rd); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; }
-        .camp-info h4 { font-size: 0.85rem; margin-bottom: 2px; }
-        .camp-info p { font-size: 0.7rem; color: var(--t2); }
-
-        /* İstatistikler */
-        .stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-box { background: var(--sf2); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid var(--bd); }
-        .stat-box small { display: block; font-size: 0.6rem; color: var(--t2); text-transform: uppercase; }
-        .stat-box b { font-family: 'JetBrains Mono'; font-size: 1.2rem; color: var(--ac); }
-
-        /* Scrollbar Gizleme */
-        ::-webkit-scrollbar { width: 0; height: 0; }
+        /* Progress Dots */
+        .streak-wrap { display: flex; gap: 5px; margin-top: 5px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bd); }
+        .dot.active { background: var(--or); box-shadow: 0 0 5px var(--or); }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="h-title">
-        <h1>YKS 2026 — Efe</h1>
-        <p id="live-clock">Yükleniyor...</p>
+    <div class="logo-wrap">
+        <div class="tomato-logo"></div>
+        <div class="h-text">
+            <h1>YKS PANELİ</h1>
+            <p id="yks-timer-text">Yükleniyor...</p>
+        </div>
     </div>
-    <div class="yks-timer">
-        <span id="yks-gun">000</span>
-        <label>Gün Kaldı</label>
+    <div style="text-align: right">
+        <span style="font-size: 1.2rem;">🔥</span>
+        <b id="streak-val" style="font-family: 'JetBrains Mono';">0</b>
     </div>
 </header>
 
-<nav id="main-nav">
-    <div class="nav-link active" data-target="dash">Dashboard</div>
-    <div class="nav-link" data-target="pomo">Pomodoro</div>
-    <div class="nav-link" data-target="topi">Konular</div>
-    <div class="nav-link" data-target="camp">Kamplar</div>
-    <div class="nav-link" data-target="prog">Program</div>
-    <div class="nav-link" data-target="exam">Denemeler</div>
-    <div class="nav-link" data-target="stat">Analiz</div>
-    <div class="nav-link" data-target="tgrm">Rapor</div>
-</nav>
+<div class="top-stats">
+    <div class="stat-pill">🚀 <b>V6</b> <span>Sürüm</span></div>
+    <div class="stat-pill">🍅 <b id="stat-pomo">0</b> <span>Seans</span></div>
+    <div class="stat-pill">⏱️ <b id="stat-mola">0</b> <span>Dk Mola</span></div>
+    <div class="stat-pill">📈 <b id="stat-prog">%0</b> <span>Başarı</span></div>
+</div>
 
-<main>
-    <!-- DASHBOARD -->
+<main id="app-main">
+    <!-- ANA SAYFA -->
     <section id="dash" class="page active">
-        <div class="card" style="background: linear-gradient(135deg, var(--sf), var(--sf2));">
-            <div id="quote" style="font-style: italic; font-weight: 700; color: var(--ac); text-align: center;">"Çalışmak, geleceği satın almaktır."</div>
+        <div class="card" style="background: linear-gradient(135deg, #4f7cff22, transparent);">
+            <span class="card-label">Günün Sözü</span>
+            <p id="quote" style="font-weight: 700; font-size: 1.1rem;">"Efe, bugün dünden daha iyi olmaya hazır mısın?"</p>
         </div>
-        <div class="stat-row">
-            <div class="stat-box"><small>Bugün</small><b id="st-bugun">0</b></div>
-            <div class="stat-box"><small>Toplam</small><b id="st-toplam">0</b></div>
-            <div class="stat-box"><small>Mola</small><b id="st-mola" style="color:var(--gr)">0</b></div>
-        </div>
+        
         <div class="card">
-            <div class="card-title">Genel İlerleme</div>
-            <div style="height: 8px; background: var(--sf2); border-radius: 10px; overflow: hidden;">
-                <div id="main-prog-bar" style="width: 0%; height: 100%; background: var(--ac); transition: 1s;"></div>
-            </div>
-            <p id="main-prog-txt" style="font-size: 0.7rem; color: var(--t2); margin-top: 8px;">0/0 Konu Tamamlandı</p>
+            <span class="card-label">Haftalık Aktivite</span>
+            <canvas id="pomoChart" height="150"></canvas>
+        </div>
+        
+        <div class="card" id="last-exam-view">
+            <span class="card-label">Son Deneme Netin</span>
+            <div style="font-size: 1.5rem; font-weight: 800; color: var(--ac);">-- / --</div>
         </div>
     </section>
 
     <!-- POMODORO -->
     <section id="pomo" class="page">
-        <div class="card" style="text-align: center;">
-            <div class="pomo-circle">
-                <svg class="pomo-svg">
-                    <circle class="pomo-bg" cx="100" cy="100" r="96"></circle>
-                    <circle id="pomo-bar" class="pomo-bar" cx="100" cy="100" r="96"></circle>
+        <div class="card timer-container">
+            <div class="timer-circle">
+                <svg class="timer-svg">
+                    <circle class="timer-bg" cx="120" cy="120" r="110"></circle>
+                    <circle id="timer-bar" class="timer-bar" cx="120" cy="120" r="110"></circle>
                 </svg>
-                <div class="pomo-text">
-                    <span id="timer-val">25:00</span>
-                    <small id="pomo-status" style="color: var(--t2); font-weight: 700;">ODAKLAN</small>
-                </div>
+                <div class="timer-display" id="time-val">25:00</div>
             </div>
-            <div class="btn-row">
-                <button class="btn btn-bd" onclick="setPomo(25)">25 Dakika</button>
-                <button class="btn btn-bd" onclick="setPomo(50)">50 Dakika</button>
+
+            <div class="music-player">
+                <button class="music-btn" id="m-lofi" onclick="toggleMusic('lofi')">🎹</button>
+                <button class="music-btn" id="m-rain" onclick="toggleMusic('rain')">🌧️</button>
+                <button class="music-btn" id="m-none" onclick="toggleMusic('none')">🔇</button>
             </div>
-            <div class="btn-row">
-                <button id="pomo-start" class="btn btn-gr" onclick="togglePomo()">BAŞLAT</button>
-                <button class="btn btn-rd" onclick="resetPomo()">SIFIRLA</button>
+
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button class="btn btn-sf" onclick="setTime(25)">25</button>
+                <button class="btn btn-sf" onclick="setTime(50)">50</button>
+                <button class="btn btn-sf" style="color:var(--gr)" onclick="setTime(5, true)">MOLA</button>
             </div>
-            <button class="btn btn-pu" style="width: 100%; margin-top: 15px;" onclick="openMusic()">🎧 YOUTUBE MUSIC REVANCED</button>
+            
+            <button id="pomo-main-btn" class="btn btn-ac" onclick="toggleTimer()">ODAKLANMAYI BAŞLAT</button>
         </div>
     </section>
 
     <!-- KONULAR -->
     <section id="topi" class="page">
-        <div id="topic-container"></div>
-    </section>
-
-    <!-- KAMPLAR -->
-    <section id="camp" class="page">
-        <div class="card-title">Önerilen 2026 Kampları</div>
-        <div id="camp-list"></div>
+        <div id="topic-list"></div>
     </section>
 
     <!-- PROGRAM -->
     <section id="prog" class="page">
-        <div class="palette" style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
-            <div class="drag-item" draggable="true" ondragstart="drag(event)" data-type="Matematik">Matematik</div>
-            <div class="drag-item" draggable="true" ondragstart="drag(event)" data-type="Fizik" style="background:var(--pu)">Fizik</div>
-            <div class="drag-item" draggable="true" ondragstart="drag(event)" data-type="Paragraf" style="background:var(--or)">Paragraf</div>
-            <div class="drag-item" draggable="true" ondragstart="drag(event)" data-type="Mola" style="background:var(--gr)">Mola</div>
-        </div>
-        <div class="prog-grid" id="prog-grid"></div>
-    </section>
-
-    <!-- DENEME -->
-    <section id="exam" class="page">
         <div class="card">
-            <div class="card-title">Deneme Kaydı</div>
-            <input type="text" id="ex-name" placeholder="Deneme Adı" style="width:100%; padding:10px; margin-bottom:10px; border-radius:8px; border:1px solid var(--bd); background:var(--sf2); color:#fff;">
-            <div class="btn-row">
-                <input type="number" id="ex-tyt" placeholder="TYT Net" style="padding:10px; border-radius:8px; border:1px solid var(--bd); background:var(--sf2); color:#fff;">
-                <input type="number" id="ex-ayt" placeholder="AYT Net" style="padding:10px; border-radius:8px; border:1px solid var(--bd); background:var(--sf2); color:#fff;">
-            </div>
-            <button class="btn btn-ac" style="width:100%; margin-top:10px;" onclick="addExam()">EKLE</button>
-        </div>
-        <div id="exam-list"></div>
-    </section>
-
-    <!-- ANALİZ -->
-    <section id="stat" class="page">
-        <div class="card">
-            <div class="card-title">Haftalık Performans</div>
-            <canvas id="pomoChart" height="200"></canvas>
-        </div>
-        <div class="card">
-            <div class="card-title">Net Gelişimi</div>
-            <canvas id="netChart" height="200"></canvas>
+            <span class="card-label">Günlük Ajandam</span>
+            <div id="agenda-list"></div>
+            <button class="btn btn-sf" onclick="addAgendaItem()">+ YENİ GÖREV EKLE</button>
         </div>
     </section>
 
-    <!-- TELEGRAM -->
+    <!-- RAPOR -->
     <section id="tgrm" class="page">
         <div class="card">
-            <div class="card-title">Telegram Entegrasyonu</div>
-            <input type="text" id="tg-token" placeholder="Bot Token" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; background:var(--sf2); border:1px solid var(--bd); color:#fff;">
-            <input type="text" id="tg-id" placeholder="Chat ID" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; background:var(--sf2); border:1px solid var(--bd); color:#fff;">
-            <button class="btn btn-bd" style="width:100%" onclick="saveTg()">AYARLARI KAYDET</button>
+            <span class="card-label">Telegram Ayarları</span>
+            <input type="text" id="tg-token" placeholder="Bot Token">
+            <input type="text" id="tg-cid" placeholder="Chat ID">
+            <button class="btn btn-sf" onclick="saveTg()">AYARLARI KAYDET</button>
         </div>
-        <button class="btn btn-ac" style="width:100%" onclick="sendTgReport()">GÜNLÜK RAPOR GÖNDER</button>
+        <button class="btn btn-ac" onclick="sendAdvancedReport()">DETAYLI ANALİZ RAPORU GÖNDER</button>
     </section>
 </main>
 
-<script>
-    // --- VERİ MODELİ ---
-    const YKS_DATE = new Date("June 20, 2026 10:00:00").getTime();
-    const SUBJECTS = {
-        "TYT Matematik": ["Temel Kavramlar", "Basamak Kavramı", "Bölme-Bölünebilme", "EBOB-EKOK", "Rasyonel Sayılar", "Basit Eşitsizlikler", "Mutlak Değer", "Üslü Sayılar", "Köklü Sayılar", "Problemler", "Kümeler", "Mantık", "Fonksiyonlar"],
-        "AYT Matematik": ["Polinomlar", "2. Dereceden Denklemler", "Logaritma", "Diziler", "Trigonometri", "Limit", "Türev", "İntegral"],
-        "Fizik": ["Fizik Bilimine Giriş", "Vektörler", "Hareket", "Kuvvet", "Enerji", "Elektrik", "Optik", "Dalgalar"],
-        "Türkçe": ["Sözcükte Anlam", "Cümlede Anlam", "Paragraf", "Dil Bilgisi", "Yazım Kuralları", "Noktalama"]
-    };
+<nav>
+    <div class="nav-item active" onclick="showPage('dash')">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Ana</span>
+    </div>
+    <div class="nav-item" onclick="showPage('pomo')">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+        <span>Pomo</span>
+    </div>
+    <div class="nav-item" onclick="showPage('topi')">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+        <span>Konu</span>
+    </div>
+    <div class="nav-item" onclick="showPage('prog')">
+        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+        <span>Liste</span>
+    </div>
+    <div class="nav-item" onclick="showPage('tgrm')">
+        <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        <span>Rapor</span>
+    </div>
+</nav>
 
-    const CAMPS = [
-        { name: "Mert Hoca", desc: "70 Günde TYT Matematik", url: "https://www.youtube.com/@MertHoca", color: "#ff4f6b" },
-        { name: "VIP Fizik", desc: "AYT Fizik Full Tekrar", url: "https://www.youtube.com/@vipfizik", color: "#4f7cff" },
-        { name: "Rehber Matematik", desc: "49 Günde TYT Matematik", url: "https://www.youtube.com/@RehberMatematik", color: "#ff8c42" },
-        { name: "Dr. Biyoloji", desc: "AYT Biyoloji Kampı", url: "https://www.youtube.com/@drbiyoloji", color: "#a259ff" },
-        { name: "Görkem Şahin", desc: "TYT Kimya Kampı", url: "https://www.youtube.com/@GorkemSahin", color: "#2ecc8f" }
+<!-- Audio Elements (Hatasız Çalma İçin Dahili) -->
+<audio id="snd-lofi" loop src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+<audio id="snd-rain" loop src="https://assets.mixkit.co/active_storage/sfx/2357/2357-preview.mp3"></audio>
+
+<script>
+    // --- DATABASE & DEĞERLER ---
+    const YKS_TARGET = new Date("June 20, 2026 10:00:00").getTime();
+    const SUBJECTS = [
+        {id: 1, cat: "Matematik", name: "Temel Kavramlar", p: "TYT"},
+        {id: 2, cat: "Matematik", name: "Problemler", p: "TYT"},
+        {id: 3, cat: "Matematik", name: "Logaritma", p: "AYT"},
+        {id: 4, cat: "Fizik", name: "Optik", p: "TYT"},
+        {id: 5, cat: "Türkçe", name: "Paragraf Teknikleri", p: "TYT"}
     ];
 
-    let db = JSON.parse(localStorage.getItem('yks_v5')) || {
-        poms: 0, today: 0, mola: 0, date: new Date().toLocaleDateString(),
-        topics: {}, exams: [], program: {}, tg: { token: '', id: '' },
+    let db = JSON.parse(localStorage.getItem('yks_v6')) || {
+        pomo: 0, mola: 0, streak: 0, 
+        lastDate: "", 
+        doneTopics: [], 
+        agenda: [{time: "09:00", task: "Paragraf Çözümü"}, {time: "11:00", task: "Matematik Kampı"}],
+        exams: [], 
+        tg: {token: "", cid: ""},
         history: {}
     };
 
     // --- SİSTEM BAŞLATICI ---
-    document.addEventListener('DOMContentLoaded', () => {
-        initNav();
-        updateClock();
-        updateYksCounter();
+    window.onload = () => {
+        initApp();
         renderTopics();
-        renderCamps();
-        renderProgram();
-        renderExams();
+        renderAgenda();
+        updateYksCounter();
         updateStats();
-        setInterval(updateClock, 1000);
-        checkDayReset();
-    });
+        initChart();
+        checkStreak();
+        setInterval(updateYksCounter, 60000);
+    };
 
-    // --- MENÜ YÖNETİMİ ---
-    function initNav() {
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                
-                link.classList.add('active');
-                const target = link.getAttribute('data-target');
-                document.getElementById(target).classList.add('active');
-                
-                if(target === 'stat') initCharts();
-            });
+    function initApp() {
+        document.getElementById('tg-token').value = db.tg.token;
+        document.getElementById('tg-cid').value = db.tg.cid;
+        document.getElementById('streak-val').innerText = db.streak;
+    }
+
+    function save() {
+        localStorage.setItem('yks_v6', JSON.stringify(db));
+        updateStats();
+    }
+
+    // --- NAVIGATION ---
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    // --- POMODORO SİSTEMİ V6 ---
+    let timerInt;
+    let timeRem = 1500;
+    let isRunning = false;
+    let currentAudio = null;
+
+    function setTime(m, isMola = false) {
+        clearInterval(timerInt);
+        isRunning = false;
+        timeRem = m * 60;
+        document.getElementById('pomo-main-btn').innerText = isMola ? "MOLAYI BAŞLAT" : "ODAKLANMAYI BAŞLAT";
+        document.getElementById('time-val').innerText = `${m}:00`;
+        updateCircle(100);
+    }
+
+    function toggleTimer() {
+        if(isRunning) {
+            clearInterval(timerInt);
+            document.getElementById('pomo-main-btn').innerText = "DEVAM ET";
+        } else {
+            timerInt = setInterval(() => {
+                timeRem--;
+                const m = Math.floor(timeRem / 60);
+                const s = timeRem % 60;
+                document.getElementById('time-val').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+                updateCircle((timeRem / 1500) * 100);
+                if(timeRem <= 0) {
+                    clearInterval(timerInt);
+                    pomoFinish();
+                }
+            }, 1000);
+            document.getElementById('pomo-main-btn').innerText = "DURAKLAT";
+        }
+        isRunning = !isRunning;
+    }
+
+    function updateCircle(pct) {
+        const offset = 691 - (691 * (pct / 100));
+        document.getElementById('timer-bar').style.strokeDashoffset = offset;
+    }
+
+    function pomoFinish() {
+        db.pomo++;
+        const today = new Date().toISOString().split('T')[0];
+        db.history[today] = (db.history[today] || 0) + 1;
+        save();
+        alert("Efe, bir seans daha bitti! Başarıya bir adım daha yaklaştın.");
+        setTime(25);
+    }
+
+    // --- MUSIC PLAYER ---
+    function toggleMusic(type) {
+        if(currentAudio) {
+            currentAudio.pause();
+            document.querySelectorAll('.music-btn').forEach(b => b.classList.remove('playing'));
+        }
+        if(type === 'none') return;
+        
+        currentAudio = document.getElementById('snd-' + type);
+        currentAudio.play();
+        document.getElementById('m-' + type).classList.add('playing');
+    }
+
+    // --- TOPICS ---
+    function renderTopics() {
+        const cont = document.getElementById('topic-list');
+        cont.innerHTML = "";
+        SUBJECTS.forEach(s => {
+            const isDone = db.doneTopics.includes(s.id);
+            cont.innerHTML += `
+                <div class="topic-card ${isDone ? 'done' : ''}" onclick="toggleTopic(${s.id})">
+                    <div class="topic-info">
+                        <h4>${s.name}</h4>
+                        <p>${s.cat} • ${s.p}</p>
+                    </div>
+                    <div class="check-btn">${isDone ? '✓' : ''}</div>
+                </div>
+            `;
         });
     }
 
-    // --- SAYAÇLAR ---
-    function updateClock() {
-        const now = new Date();
-        document.getElementById('live-clock').innerText = now.toLocaleString('tr-TR');
+    function toggleTopic(id) {
+        if(db.doneTopics.includes(id)) db.doneTopics = db.doneTopics.filter(x => x !== id);
+        else db.doneTopics.push(id);
+        save();
+        renderTopics();
     }
 
+    // --- AGENDA (PROGRAM) ---
+    function renderAgenda() {
+        const cont = document.getElementById('agenda-list');
+        cont.innerHTML = "";
+        db.agenda.forEach((a, idx) => {
+            cont.innerHTML += `
+                <div class="agenda-item">
+                    <div class="agenda-time">${a.time}</div>
+                    <div class="agenda-content">
+                        <b>${a.task}</b>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function addAgendaItem() {
+        const task = prompt("Görev nedir?");
+        const time = prompt("Saat kaçta? (Örn: 14:30)");
+        if(task && time) {
+            db.agenda.push({time, task});
+            save();
+            renderAgenda();
+        }
+    }
+
+    // --- UTILS ---
     function updateYksCounter() {
-        const now = new Date().getTime();
-        const diff = YKS_DATE - now;
+        const diff = YKS_TARGET - new Date().getTime();
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        document.getElementById('yks-gun').innerText = days;
+        document.getElementById('yks-timer-text').innerText = `${days} GÜN KALDI`;
     }
 
-    function checkDayReset() {
+    function updateStats() {
+        document.getElementById('stat-pomo').innerText = db.pomo;
+        document.getElementById('stat-mola').innerText = db.mola;
+        const prog = Math.round((db.doneTopics.length / SUBJECTS.length) * 100);
+        document.getElementById('stat-prog').innerText = `%${prog}`;
+    }
+
+    function checkStreak() {
         const today = new Date().toLocaleDateString();
-        if (db.date !== today) {
-            db.today = 0;
-            db.date = today;
+        if(db.lastDate !== today) {
+            db.streak++;
+            db.lastDate = today;
             save();
         }
     }
 
-    // --- POMODORO SİSTEMİ ---
-    let pomoInt;
-    let pomoTime = 1500;
-    let isPomoRunning = false;
-
-    function setPomo(m) {
-        clearInterval(pomoInt);
-        isPomoRunning = false;
-        pomoTime = m * 60;
-        updatePomoUI();
-        document.getElementById('pomo-start').innerText = "BAŞLAT";
-    }
-
-    function togglePomo() {
-        if(isPomoRunning) {
-            clearInterval(pomoInt);
-            document.getElementById('pomo-start').innerText = "DEVAM ET";
-        } else {
-            pomoInt = setInterval(() => {
-                pomoTime--;
-                updatePomoUI();
-                if(pomoTime <= 0) {
-                    clearInterval(pomoInt);
-                    pomoComplete();
-                }
-            }, 1000);
-            document.getElementById('pomo-start').innerText = "DURDUR";
-        }
-        isPomoRunning = !isPomoRunning;
-    }
-
-    function updatePomoUI() {
-        const m = Math.floor(pomoTime / 60);
-        const s = pomoTime % 60;
-        document.getElementById('timer-val').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-        const offset = 603 - (603 * (pomoTime / (pomoTime > 1500 ? 3000 : 1500)));
-        document.getElementById('pomo-bar').style.strokeDashoffset = offset;
-    }
-
-    function pomoComplete() {
-        db.poms++;
-        db.today++;
-        const key = new Date().toISOString().split('T')[0];
-        db.history[key] = (db.history[key] || 0) + 1;
-        save();
-        updateStats();
-        alert("Pomodoro Tamamlandı! Efe, harikasın.");
-        resetPomo();
-    }
-
-    function resetPomo() {
-        clearInterval(pomoInt);
-        setPomo(25);
-    }
-
-    function openMusic() {
-        window.location.href = "intent://#Intent;package=app.revanced.android.apps.youtube.music;scheme=https;end";
-    }
-
-    // --- KONU YÖNETİMİ ---
-    function renderTopics() {
-        const container = document.getElementById('topic-container');
-        container.innerHTML = "";
-        Object.entries(SUBJECTS).forEach(([name, topics]) => {
-            let doneCount = topics.filter(t => db.topics[t]).length;
-            const acc = document.createElement('div');
-            acc.className = 'acc-item';
-            acc.innerHTML = `
-                <div class="acc-head" onclick="toggleAcc(this)">
-                    <span>${name}</span>
-                    <small>${doneCount}/${topics.length}</small>
-                </div>
-                <div class="acc-body">
-                    ${topics.map(t => `
-                        <div class="topic">
-                            <input type="checkbox" ${db.topics[t] ? 'checked' : ''} onchange="saveTopic('${t}', this)">
-                            <span>${t}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-            container.appendChild(acc);
-        });
-        updateMainProgress();
-    }
-
-    function toggleAcc(el) {
-        const body = el.nextElementSibling;
-        body.style.display = body.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function saveTopic(name, el) {
-        db.topics[name] = el.checked;
-        save();
-        renderTopics();
-    }
-
-    function updateMainProgress() {
-        let total = 0, done = 0;
-        Object.values(SUBJECTS).forEach(list => {
-            total += list.length;
-            list.forEach(t => { if(db.topics[t]) done++; });
-        });
-        const pct = Math.round((done / total) * 100) || 0;
-        document.getElementById('main-prog-bar').style.width = pct + "%";
-        document.getElementById('main-prog-txt').innerText = `${done}/${total} Konu Tamamlandı (%${pct})`;
-    }
-
-    // --- KAMPLAR ---
-    function renderCamps() {
-        const container = document.getElementById('camp-list');
-        CAMPS.forEach(c => {
-            const item = document.createElement('a');
-            item.className = 'camp-item';
-            item.href = c.url;
-            item.target = "_blank";
-            item.innerHTML = `
-                <div class="camp-img" style="background:${c.color}">${c.name[0]}</div>
-                <div class="camp-info">
-                    <h4>${c.name}</h4>
-                    <p>${c.desc}</p>
-                </div>
-            `;
-            container.appendChild(item);
-        });
-    }
-
-    // --- PROGRAM ---
-    const DAYS = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
-    function renderProgram() {
-        const grid = document.getElementById('prog-grid');
-        grid.innerHTML = "";
-        DAYS.forEach((day, i) => {
-            const div = document.createElement('div');
-            div.className = 'prog-day';
-            div.innerHTML = `
-                <div class="day-title">${day}</div>
-                <div class="drop-zone" ondrop="drop(event, ${i})" ondragover="allowDrop(event)">
-                    ${(db.program[i] || []).map(t => `<div class="drag-item">${t}</div>`).join('')}
-                </div>
-            `;
-            grid.appendChild(div);
-        });
-    }
-
-    function allowDrop(ev) { ev.preventDefault(); }
-    function drag(ev) { ev.dataTransfer.setData("text", ev.target.dataset.type); }
-    function drop(ev, day) {
-        ev.preventDefault();
-        const type = ev.dataTransfer.getData("text");
-        if(!db.program[day]) db.program[day] = [];
-        db.program[day].push(type);
-        save();
-        renderProgram();
-    }
-
-    // --- DENEMELER ---
-    function addExam() {
-        const name = document.getElementById('ex-name').value;
-        const tyt = document.getElementById('ex-tyt').value;
-        const ayt = document.getElementById('ex-ayt').value;
-        if(!name || !tyt) return;
-        db.exams.push({ name, tyt, ayt, date: new Date().toLocaleDateString() });
-        save();
-        renderExams();
-    }
-
-    function renderExams() {
-        const container = document.getElementById('exam-list');
-        container.innerHTML = "";
-        db.exams.slice().reverse().forEach(ex => {
-            container.innerHTML += `
-                <div class="card">
-                    <div style="font-weight:800">${ex.name}</div>
-                    <div style="color:var(--ac); font-family:'JetBrains Mono'; font-size:1.1rem;">TYT: ${ex.tyt} | AYT: ${ex.ayt}</div>
-                    <small style="color:var(--t2)">${ex.date}</small>
-                </div>
-            `;
-        });
-    }
-
-    // --- ANALİZ ---
-    let pChart, nChart;
-    function initCharts() {
-        if(pChart) pChart.destroy();
-        if(nChart) nChart.destroy();
-
-        const ctxP = document.getElementById('pomoChart').getContext('2d');
-        const labelsP = Object.keys(db.history).slice(-7);
-        const dataP = Object.values(db.history).slice(-7);
-
-        pChart = new Chart(ctxP, {
-            type: 'bar',
-            data: {
-                labels: labelsP,
-                datasets: [{ label: 'Pomodoro', data: dataP, backgroundColor: '#4f7cff' }]
-            },
-            options: { responsive: true, plugins: { legend: { display: false } } }
-        });
-
-        const ctxN = document.getElementById('netChart').getContext('2d');
-        nChart = new Chart(ctxN, {
-            type: 'line',
-            data: {
-                labels: db.exams.map(e => e.name),
-                datasets: [
-                    { label: 'TYT', data: db.exams.map(e => e.tyt), borderColor: '#4f7cff', tension: 0.4 },
-                    { label: 'AYT', data: db.exams.map(e => e.ayt), borderColor: '#a259ff', tension: 0.4 }
-                ]
-            }
-        });
-    }
-
-    // --- DİĞER FONKSİYONLAR ---
-    function save() { localStorage.setItem('yks_v5', JSON.stringify(db)); }
-    function updateStats() {
-        document.getElementById('st-bugun').innerText = db.today;
-        document.getElementById('st-toplam').innerText = db.poms;
-        document.getElementById('st-mola').innerText = db.mola;
-    }
-
+    // --- TELEGRAM ADVANCED ---
     function saveTg() {
         db.tg.token = document.getElementById('tg-token').value;
-        db.tg.id = document.getElementById('tg-id').value;
+        db.tg.cid = document.getElementById('tg-cid').value;
         save();
-        alert("Telegram Ayarları Kaydedildi.");
+        alert("Telegram bağlantısı kuruldu!");
     }
 
-    async function sendTgReport() {
-        if(!db.tg.token) return alert("Önce Token girin.");
-        const text = `🚀 Efe YKS Raporu\nBugün: ${db.today} Pomodoro\nToplam: ${db.poms} Pomodoro\nDeneme Sayısı: ${db.exams.length}`;
-        const url = `https://api.telegram.org/bot${db.tg.token}/sendMessage?chat_id=${db.tg.id}&text=${encodeURIComponent(text)}`;
+    async function sendAdvancedReport() {
+        const prog = Math.round((db.doneTopics.length / SUBJECTS.length) * 100);
+        const text = `
+🔥 *Efe YKS 2026 İlerleme Raporu*
+--------------------------------
+📅 *Tarih:* ${new Date().toLocaleDateString()}
+🍅 *Tamamlanan Pomodoro:* ${db.pomo} Seans
+⚡ *Günlük Seri (Streak):* ${db.streak} Gün
+📊 *Müfredat Tamamlama:* %${prog}
+
+✅ *Son Bitirilen Konular:*
+${db.doneTopics.slice(-3).map(id => "- " + SUBJECTS.find(s=>s.id==id).name).join('\n')}
+
+🎯 *Efe'ye Not:* "Hedefin olan üniversite için bugün %${Math.random() > 0.5 ? '1 daha iyisin' : '0.5 daha yaklaştın'}. Sakın durma!"
+        `;
+        const url = `https://api.telegram.org/bot${db.tg.token}/sendMessage?chat_id=${db.tg.cid}&text=${encodeURIComponent(text)}&parse_mode=Markdown`;
         await fetch(url);
-        alert("Rapor Gönderildi!");
+        alert("Detaylı rapor Telegram'a uçuruldu!");
+    }
+
+    function initChart() {
+        const ctx = document.getElementById('pomoChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Object.keys(db.history).slice(-5),
+                datasets: [{
+                    label: 'Pomo',
+                    data: Object.values(db.history).slice(-5),
+                    borderColor: '#4f7cff',
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(79, 124, 255, 0.1)'
+                }]
+            },
+            options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
+        });
     }
 </script>
-
 </body>
 </html>
